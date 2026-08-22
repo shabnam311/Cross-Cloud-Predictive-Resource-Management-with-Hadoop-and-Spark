@@ -1,9 +1,6 @@
 #  Cross-Cloud Predictive Resource Management with Hadoop & Spark
 
-![Status: Work in Progress](https://img.shields.io/badge/Status-Work_in_Progress-yellow)
-![Tech: Hadoop](https://img.shields.io/badge/Tech-Hadoop-blue)
-![Tech: Spark](https://img.shields.io/badge/Tech-Apache_Spark-orange)
-![Tech: React](https://img.shields.io/badge/Tech-React-61DAFB)
+
 
 ##  Project Overview
 Modern cloud infrastructures traditionally rely on reactive resource allocation, which can lead to latency spikes and inefficient resource utilization. This project shifts the paradigm from **reactive to proactive resource allocation** by building an end-to-end Big Data pipeline. 
