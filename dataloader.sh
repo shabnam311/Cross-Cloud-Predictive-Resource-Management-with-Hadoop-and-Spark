@@ -59,3 +59,12 @@ echo "========================================="
 
 hdfs dfs -ls -R /telemetry/raw/
 
+echo "====================================================="
+echo " Loading Task Arrival raw parquet into HDFS"
+echo "====================================================="
+
+hdfs dfs -mkdir -p /telemetry/raw/task_arrival
+hdfs dfs -put -f ./data/google_task_events.parquet /telemetry/raw/task_arrival/google_task_events.parquet
+hdfs dfs -put -f ./data/alibaba_task_events.parquet /telemetry/raw/task_arrival/alibaba_task_events.parquet
+
+echo " Task Arrival raw data loaded."

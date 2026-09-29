@@ -24,6 +24,21 @@ By leveraging **Google Cluster Trace 2019** and **Alibaba Cluster Trace 2018**, 
 *   **Frontend:** React.js
 *   **Infrastructure & Deployment:** Docker (ARM-based architecture), Kubernetes (Planned)
 
+## Task Arrival Rate Model (Transfer Learning) — v2
+
+Task arrival rate is modeled as a two-part "hurdle" model (RandomForestClassifier
+for idle-vs-active, GBTRegressor for magnitude on active buckets), trained via
+**pooled instance-based transfer learning**: Google's chronological 80% training
+split is pooled with a 10% chronological warm-up slice of Alibaba, and one model
+is fit on the combined pool — the same strategy used by the CPU/Memory models
+(`randomcpu.scala`, `linearcpu.scala`, `gradientcpu.scala`). Both stages use the
+full cross-domain feature set already present in `ml_modeling_ready.parquet`
+(CPU, memory, error-count and instance-arrival signals) plus a handful of
+arrival-specific lag/rolling/time-of-day features, selected down to the top 12
+via `UnivariateFeatureSelector`, with a small grid search per stage.
+
+Run order and full code: see `TASK_ARRIVAL_RATE_TRANSFER_LEARNING_V2.md`.
+
 ##  Datasets
 *   [Google Cluster Trace 2019](https://github.com/google/cluster-data)
 *   [Alibaba Cluster Trace 2018](https://github.com/alibaba/clusterdata)
@@ -37,7 +52,8 @@ By leveraging **Google Cluster Trace 2019** and **Alibaba Cluster Trace 2018**, 
 - [x] Generation and verification of synthetic unstructured logs for robustness testing.
 
 ###  In Progress / Upcoming
-- [ ] Finalize Spark MLlib Gradient Boosted Tree models (CPU, Memory, Task Arrival).
+- [x] Finalize Spark MLlib GBT/RF models for CPU and Memory.
+- [x] Finalize Task Arrival Rate model (hurdle classifier + regressor, Google→Alibaba transfer learning).
 - [ ] Develop the resource recommendation engine logic.
 - [ ] Build and integrate the React frontend dashboard.
 - [ ] (Optional) Kubernetes-based deployment and validation.

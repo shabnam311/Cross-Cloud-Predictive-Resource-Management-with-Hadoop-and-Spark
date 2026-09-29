@@ -1,0 +1,8 @@
+# Data files and datasets
+data/
+*.parquet
+
+# Logs & Temporary files
+*.log
+.DS_Store
+Thumbs.db
