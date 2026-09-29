@@ -1,0 +1,41 @@
+=====================================================
+ Task Arrival Rate Forecasting - Evaluation Metrics
+ Target Domain: Alibaba Cluster Trace 2018
+ Transfer Learning Source: Google Cluster Trace 2019
+=====================================================
+
+--- Part A: Hurdle Classification (Idle vs Active) ---
+AUC-ROC             : 0.6763
+Weighted F1         : 0.5802
+Weighted Precision  : 0.7601
+Weighted Recall     : 0.5401
+Active-Class Recall : 75.74% (46,761 / 61,744 active burst buckets correctly detected)
+
+Confusion Matrix:
++-----------+-----------------+-------------------+
+| Actual    | Pred: Idle(0.0) | Pred: Active(1.0) |
++-----------+-----------------+-------------------+
+| Idle(0.0) | 115,710         | 123,358           |
+| Act (1.0) | 14,983          | 46,761            |
++-----------+-----------------+-------------------+
+
+--- Part B: Hurdle Magnitude Regression (Active Rows Only) ---
+RMSE (log1p space)          : 0.3667
+MAE  (log1p space)          : 0.2618
+R^2  (log1p space)          : 0.0491
+RMSE (Real Arrival Units)   : 2.9717 tasks/bucket
+MAE  (Real Arrival Units)   : 0.8530 tasks/bucket
+Mean Poisson Deviance       : 1.2296
+
+--- Sample Predictions (Top 10 Active Rows) ---
+Machine ID | Bucket Timestamp | Actual Arrivals | Predicted Arrivals
+m_1857     | 89390            | 1.0             | 1.45
+m_24       | 90120            | 1.0             | 1.48
+m_871      | 90290            | 1.0             | 1.46
+m_2034     | 90640            | 1.0             | 1.18
+m_2503     | 90760            | 1.0             | 1.37
+m_3334     | 91490            | 2.0             | 1.37
+m_721      | 91570            | 1.0             | 1.41
+m_488      | 91580            | 2.0             | 1.41
+m_1764     | 91630            | 4.0             | 1.41
+m_3629     | 91630            | 4.0             | 1.41
