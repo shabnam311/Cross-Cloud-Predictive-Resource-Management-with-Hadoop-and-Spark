@@ -1,0 +1,36 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 40px var(--padding-x-desktop) 80px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+.page-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hairline {
+  border: 0;
+  height: 1px;
+  background-color: var(--color-line);
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .main-content {
+    padding: 24px var(--padding-x-mobile) 60px;
+    gap: 48px;
+  }
+}

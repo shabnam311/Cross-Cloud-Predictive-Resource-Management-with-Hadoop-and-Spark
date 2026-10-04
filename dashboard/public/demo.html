@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross-Cloud Resource Forecasting</title>
+<meta name="description" content="Forecasts and resource recommendations from Google and Alibaba cluster traces.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%232F5D50'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F5F6F4;--surface:#fff;--ink:#1E2430;--muted:#667085;--line:#E2E5E3;--pine:#2F5D50;--google:#3B6EA8;--alibaba:#C98A2B;--brick:#A3473B;--r:6px}
+*{box-sizing:border-box}
+html{font-family:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.6;color:var(--ink);background:var(--paper);font-variant-numeric:tabular-nums}
+body{margin:0}
+h1,h2,h3,p{margin:0}
+h1{font-size:30px;font-weight:600;line-height:1.2}
+h2{font-size:20px;font-weight:600;line-height:1.2;margin-bottom:16px}
+h3{font-size:15px;font-weight:600}
+a{color:var(--pine)}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
+.bar{background:var(--surface);border-bottom:1px solid var(--line)}
+.bar div{max-width:1080px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;gap:24px;height:60px}
+.brand{font-weight:600;white-space:nowrap}
+nav{display:flex;gap:24px;overflow-x:auto;white-space:nowrap}
+nav a{color:var(--ink);text-decoration:none;font-weight:500;padding:4px 0}
+nav a:hover{color:var(--pine)}
+nav a.on{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+main{max-width:1080px;margin:0 auto;padding:56px 32px 40px}
+.sec{margin-top:72px}
+.lede{color:var(--muted);margin-top:8px;max-width:68ch}
+.note{color:var(--muted);font-size:13px;margin-top:16px}
+.big{font-size:44px;font-weight:600;line-height:1.15;max-width:20ch;margin-top:48px}
+.figs{display:flex;flex-wrap:wrap;margin-top:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.figs div{flex:1 1 200px;padding:20px 24px 20px 0}
+.figs div+div{padding-left:24px;border-left:1px solid var(--line)}
+.figs b{display:block;font-size:30px;font-weight:600;line-height:1.2}
+.figs span{color:var(--muted);font-size:13px}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0 16px}
+button,select{font:inherit;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:6px 14px;cursor:pointer}
+button:hover,select:hover{border-color:var(--muted)}
+button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+select{background:var(--surface)}
+.chart{position:relative}
+svg{width:100%;height:auto;display:block;overflow:visible}
+svg text{font-size:12px;fill:var(--muted);font-family:inherit}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;font-size:12px;line-height:1.5;display:none;white-space:nowrap;z-index:2}
+.leg{display:flex;flex-wrap:wrap;gap:20px;font-size:13px;color:var(--muted);margin-top:8px}
+.leg i{display:inline-block;width:18px;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.leg i.d{border-top-style:dashed}
+.cap{color:var(--muted);font-size:13px;margin-top:8px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:8px 16px 8px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px 16px 12px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--surface)}
+tr.why td{white-space:normal;color:var(--muted);padding-top:0;max-width:60ch}
+.best{font-weight:600}
+.up{color:var(--brick);font-weight:500}.down{color:var(--pine);font-weight:500}.hold{color:var(--muted);font-weight:500}
+.list{list-style:none;padding:0;margin:0}
+.list li{display:flex;flex-wrap:wrap;gap:4px 24px;padding:12px 0;border-bottom:1px solid var(--line)}
+.kv{display:flex;flex-wrap:wrap;gap:8px 40px;margin-top:16px}
+.kv span{color:var(--muted);font-size:13px;display:block}
+.kv b{font-weight:600;font-size:20px}
+.model{padding:32px 0;border-top:1px solid var(--line)}
+.fr{display:grid;grid-template-columns:160px 1fr 48px;gap:12px;align-items:center;font-size:13px;margin-top:6px}
+.fr i{display:block;height:8px;background:var(--pine);border-radius:2px}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;gap:8px;padding:20px 0;border-top:1px solid var(--line)}
+ol.steps li:before{content:counter(s);color:var(--muted)}
+.tool{color:var(--muted);font-size:13px}
+.p p+p{margin-top:16px}.p{max-width:68ch}
+.pad{padding-left:0}
+footer{max-width:1080px;margin:0 auto;padding:24px 32px 48px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:dr .7s ease-out forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.draw{animation:none;stroke-dasharray:none}}
+@media(max-width:720px){main,footer,.bar div{padding-left:20px;padding-right:20px}.big{font-size:32px}.figs div+div{padding-left:0;border-left:0}.bar div{flex-direction:column;align-items:flex-start;height:auto;padding-top:12px;padding-bottom:8px;gap:4px}nav{max-width:100%}.fr{grid-template-columns:110px 1fr 40px}}
+</style>
+</head>
+<body>
+<header class="bar"><div><span class="brand">Cross-Cloud Resource Forecasting</span>
+<nav id="nav"><a href="#/">Overview</a><a href="#/forecasts">Forecasts</a><a href="#/cross-cloud">Cross-cloud</a><a href="#/recommendations">Recommendations</a><a href="#/models">Models</a><a href="#/pipeline">Pipeline</a><a href="#/about">About</a></nav></div></header>
+<main id="app"></main>
+<footer>Sample data. Generated 4 Oct 2026, 14:00. Replace the values in this file with exported Spark output.</footer>
+<script>
+const $=s=>document.querySelector(s);
+let seed=11;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+const MET={cpu:'CPU usage',memory:'Memory',task:'Task arrival'};
+const CL={google:'Google 2019',alibaba:'Alibaba 2018'};
+const COL={google:'var(--google)',alibaba:'var(--alibaba)'};
+const pct=v=>Math.round(v*100)+'%',num=v=>Math.round(v).toLocaleString('en-US');
+const FMT={cpu:pct,memory:pct,task:num};
+const cfg={cpu:{google:[.6,.17,0,.05],alibaba:[.52,.14,1.2,.05]},memory:{google:[.7,.1,.6,.03],alibaba:[.64,.12,1.8,.03]},task:{google:[1800,520,.3,110],alibaba:[1400,420,1.5,90]}};
+const D={};
+for(const m in cfg){D[m]={};for(const c in cfg[m]){const [b,a,ph,nz]=cfg[m][c];D[m][c]=Array.from({length:96},(_,i)=>{const t=b+a*Math.sin(2*Math.PI*i/48+ph)+(rnd()-.5)*nz;const p=t+(rnd()-.5)*nz*.8;return{i,a:i<90?t:null,p}})}}
+const now=m=>D[m].google[95].p;
+const label=i=>i<90?Math.round((90-i)/2)+'h ago':i==90?'now':'in '+(i-90)/2+'h';
+const err=(d,k)=>{const x=d.filter(p=>p.a!=null);return k=='rmse'?Math.sqrt(x.reduce((s,p)=>s+(p.p-p.a)**2,0)/x.length):x.reduce((s,p)=>s+Math.abs(p.p-p.a),0)/x.length};
+const REC=[
+{c:'google',r:'CPU',a:'up',p:18,w:'14:00 to 15:00',f:.86,why:'Forecast CPU climbs above 80% as task arrivals rise ahead of the evening peak.'},
+{c:'alibaba',r:'Memory',a:'down',p:12,w:'15:00 to 17:00',f:.78,why:'Memory use stays under 55% for the next two hours, so spare capacity can be released.'},
+{c:'google',r:'Task arrival',a:'hold',p:0,w:'14:00 to 16:00',f:.91,why:'Arrival rate is forecast to stay within 5% of the current level.'},
+{c:'alibaba',r:'CPU',a:'up',p:9,w:'16:00 to 17:00',f:.72,why:'A short burst of batch jobs is expected near the top of the hour.'},
+{c:'google',r:'Memory',a:'up',p:6,w:'18:00 to 20:00',f:.69,why:'Memory pressure rises slowly through the evening and crosses 85% by 19:30.'},
+{c:'alibaba',r:'Task arrival',a:'down',p:15,w:'22:00 to 02:00',f:.83,why:'Overnight arrivals fall to about half of the daytime rate.'}];
+const AL={up:'Scale up',down:'Scale down',hold:'Hold'};
+const CMP=[];
+['cpu','memory','task'].forEach((m,k)=>[['google','google'],['alibaba','alibaba'],['google','alibaba'],['alibaba','google']].forEach(([a,b],j)=>{const same=a==b;CMP.push({m,a,b,rmse:+((same?.032:.071)+k*.004+j*.002).toFixed(3),mae:+((same?.024:.055)+k*.003+j*.002).toFixed(3),r2:+((same?.94:.82)-k*.02-j*.01).toFixed(2)})}));
+const FEAT={cpu:[['cpu_lag_1h',.31],['hour_of_day',.19],['cpu_lag_24h',.16],['task_arrivals_1h',.12],['mem_usage',.08]],memory:[['mem_lag_1h',.34],['mem_lag_24h',.18],['hour_of_day',.14],['cpu_usage',.1],['running_tasks',.08]],task:[['arrivals_lag_1h',.29],['hour_of_day',.24],['arrivals_lag_24h',.2],['day_of_week',.09],['queue_length',.07]]};
+const STAGES=[['Docker setup','Docker, ARM','done','Hadoop and Spark containers running locally.'],['HDFS ingestion','HDFS','done','Google 2019 and Alibaba 2018 traces loaded.'],['Schema standardisation','Scala, MapReduce','done','Both trace formats unified into one schema.'],['Synthetic log generation','Scala','done','Unstructured logs created and checked to test robustness.'],['Forecast models','Spark MLlib','in progress','Three gradient boosted tree models for CPU, memory and task arrival.'],['Recommendation engine','Scala','in progress','Turns forecasts into scale up, scale down or hold actions.'],['Dashboard','React','in progress','This interface, fed by exported JSON.'],['Kubernetes deployment','Kubernetes','planned','Optional validation on a cluster.']];
+let st={met:'cpu',cl:'google',tbl:false,fc:'all',fa:'all',open:null,drawn:false};
+const pend=[];
+function chart(id,series,fmt,draw){
+const W=1000,H=320,L=52,R=12,T=12,B=28,v=[];series.forEach(s=>s.d.forEach(p=>{if(p.a!=null)v.push(p.a);v.push(p.p)}));
+let lo=Math.min(...v),hi=Math.max(...v);const pd=(hi-lo)*.1;lo-=pd;hi+=pd;
+const x=i=>L+(W-L-R)*i/95,y=n=>T+(H-T-B)*(1-(n-lo)/(hi-lo));let g='';
+for(let k=0;k<5;k++){const n=lo+(hi-lo)*k/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y(n)}" y2="${y(n)}" stroke="var(--line)"/><text x="${L-8}" y="${y(n)+4}" text-anchor="end">${fmt(n)}</text>`}
+[0,24,48,72,90].forEach(i=>g+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle">${i==90?'now':Math.round((90-i)/2)+'h ago'}</text>`);
+g+=`<rect x="${x(90)}" y="${T}" width="${x(95)-x(90)}" height="${H-T-B}" fill="var(--pine)" opacity=".1"/><text x="${x(90)-6}" y="${T+12}" text-anchor="end" fill="#2F5D50">Forecast</text>`;
+const P=(d,f)=>d.map((p,j)=>(j?'L':'M')+x(p.i).toFixed(1)+' '+y(f(p)).toFixed(1)).join('');
+series.forEach(s=>{g+=`<path d="${P(s.d.filter(p=>p.a!=null),p=>p.a)}" fill="none" stroke="${s.ca}" stroke-width="1.5" ${draw?'pathLength="1" class="draw"':''}/><path d="${P(s.d,p=>p.p)}" fill="none" stroke="${s.cp}" stroke-width="1.5" stroke-dasharray="5 4"/>`});
+g+=`<line id="${id}v" y1="${T}" y2="${H-B}" stroke="var(--muted)" style="display:none"/>`;
+pend.push(()=>{const el=$('#'+id),sv=el.querySelector('svg'),tp=el.querySelector('.tip'),vl=$('#'+id+'v');
+sv.addEventListener('mousemove',e=>{const r=sv.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W;const i=Math.max(0,Math.min(95,Math.round((px-L)/(W-L-R)*95)));
+vl.setAttribute('x1',x(i));vl.setAttribute('x2',x(i));vl.style.display='';
+tp.innerHTML='<b>'+label(i)+'</b>'+series.map(s=>{const p=s.d[i];return '<br>'+s.n+': '+(p.a!=null?fmt(p.a)+' actual, ':'')+fmt(p.p)+' predicted'}).join('');
+tp.style.display='block';const tx=(x(i)/W)*r.width;tp.style.left=Math.min(tx+12,r.width-tp.offsetWidth)+'px';tp.style.top='8px'});
+sv.addEventListener('mouseleave',()=>{tp.style.display='none';vl.style.display='none'})});
+return `<div class="chart" id="${id}"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of actual and predicted values over the last 45 hours with a 3 hour forecast">${g}</svg><div class="tip"></div></div>`}
+const mk=(m,c,both)=>({n:CL[c],d:D[m][c],ca:both?COL[c]:'#1E2430',cp:both?COL[c]:'#2F5D50'});
+const legend=both=>both?`<div class="leg"><span><i style="border-color:var(--google)"></i>Google 2019</span><span><i style="border-color:var(--alibaba)"></i>Alibaba 2018</span><span><i class="d" style="border-color:var(--muted)"></i>Predicted</span></div>`:`<div class="leg"><span><i style="border-color:var(--ink)"></i>Actual</span><span><i class="d" style="border-color:var(--pine)"></i>Predicted</span></div>`;
+const hd=(t,s)=>`<h1>${t}</h1><p class="lede">${s}</p>`;
+const seg=(items,cur,fn)=>items.map(([k,l])=>`<button class="${k==cur?'on':''}" onclick="${fn}('${k}')">${l}</button>`).join('');
+const P={
+'/'(){const first=!st.drawn;st.drawn=true;
+return `<h1 style="position:absolute;left:-9999px">Overview</h1><p class="big">Over the next hour, CPU on Google 2019 is forecast to reach ${pct(now('cpu'))}.</p>
+<div class="figs"><div><b>${pct(now('cpu'))}</b><span>CPU usage, Google 2019</span></div><div><b>${pct(now('memory'))}</b><span>Memory, Google 2019</span></div><div><b>${num(now('task'))}</b><span>Tasks per minute, Google 2019</span></div></div>
+<section class="sec" style="margin-top:56px"><h2>CPU forecast</h2>${chart('c1',[mk('cpu','google',0)],pct,first)}${legend(0)}<p class="cap">Solid line shows measured usage. Dashed line shows the model. The shaded band is the 3 hour forecast.</p></section>
+<section class="sec"><h2>Latest recommendations</h2><ul class="list">${REC.slice(0,3).map(r=>`<li><span class="${r.a}" style="min-width:90px">${AL[r.a]}</span><span style="min-width:90px">${r.r}</span><span>${CL[r.c]}</span><span class="tool">${r.w}</span></li>`).join('')}</ul><p class="note"><a href="#/recommendations">See all recommendations</a></p></section>`},
+'/forecasts'(){const both=st.fc=='all',cs=both?['google','alibaba']:[st.fc],m=st.met,f=FMT[m];
+const body=st.tbl?`<div class="tw"><table><tr><th>Time</th><th>Cluster</th><th>Actual</th><th>Predicted</th></tr>${cs.flatMap(c=>D[m][c].slice(-10).map(p=>`<tr><td>${label(p.i)}</td><td>${CL[c]}</td><td>${p.a!=null?f(p.a):'Not yet known'}</td><td>${f(p.p)}</td></tr>`)).join('')}</table></div>`:chart('c2',cs.map(c=>mk(m,c,both)),f,0)+legend(both);
+return hd('Forecasts','Measured and predicted values for each cluster, with a 3 hour look ahead.')+`<div class="ctl">${seg(Object.entries(MET),m,'setMet')}</div><div class="ctl" style="margin-top:0">${seg([['all','Both clusters'],['google','Google 2019'],['alibaba','Alibaba 2018']],st.fc,'setFc')}<button onclick="st.tbl=!st.tbl;go()" style="margin-left:auto">${st.tbl?'View as chart':'View as table'}</button></div>${body}
+<div class="kv">${cs.map(c=>`<div><span>${CL[c]}, RMSE</span><b>${m=='task'?num(err(D[m][c],'rmse')):(err(D[m][c],'rmse')*100).toFixed(1)+' pts'}</b></div><div><span>${CL[c]}, MAE</span><b>${m=='task'?num(err(D[m][c],'mae')):(err(D[m][c],'mae')*100).toFixed(1)+' pts'}</b></div>`).join('')}</div>`},
+'/cross-cloud'(){const avg=(s,k)=>CMP.filter(r=>r.m==k&&(r.a==r.b)==s).reduce((t,r)=>t+r.rmse,0)/2,W=1000,H=280,L=52,B=32,T=12,mx=.1,y=v=>T+(H-T-B)*(1-v/mx);let g='';
+for(let k=0;k<=4;k++){const v=mx*k/4;g+=`<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-8}" y="${y(n)+4}" text-anchor="end">${v.toFixed(3)}</text>`}
+['cpu','memory','task'].forEach((m,i)=>{const bx=L+(W-L)/3*i+60;[[true,'#2F5D50'],[false,'#9AA5A0']].forEach(([s,c],j)=>{const v=avg(s,m);g+=`<rect x="${bx+j*100}" y="${y(v)}" width="90" height="${H-B-y(v)}" fill="${c}"/><text x="${bx+j*100+45}" y="${y(v)-6}" text-anchor="middle">${v.toFixed(3)}</text>`});g+=`<text x="${bx+95}" y="${H-10}" text-anchor="middle">${MET[m]}</text>`});
+const best={};CMP.forEach(r=>{if(!best[r.m]||r.rmse<best[r.m].rmse)best[r.m]=r});
+return hd('Cross-cloud','Does a model trained on one cloud still work on the other? Lower error is better.')+`<section class="sec" style="margin-top:40px"><h2>Average RMSE by metric</h2><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grouped bar chart comparing RMSE when training and testing on the same cloud versus a different cloud">${g}</svg><div class="leg"><span><i style="border-color:#2F5D50"></i>Same cloud</span><span><i style="border-color:#9AA5A0"></i>Other cloud</span></div><p class="cap">Models lose accuracy on a cloud they have not seen. The gap is the cost of generalising.</p></section>
+<section class="sec"><h2>All runs</h2><div class="tw"><table><tr><th>Metric</th><th>Train on</th><th>Test on</th><th>RMSE</th><th>MAE</th><th>R squared</th></tr>${CMP.map(r=>`<tr class="${best[r.m]==r?'best':''}"><td>${MET[r.m]}</td><td>${CL[r.a]}</td><td>${CL[r.b]}</td><td>${r.rmse}</td><td>${r.mae}</td><td>${r.r2}</td></tr>`).join('')}</table></div></section>`},
+'/recommendations'(){const rows=REC.map((r,i)=>({...r,i})).filter(r=>(st.rc||'all')=='all'||r.c==st.rc).filter(r=>st.ra=='all'||!st.ra||r.a==st.ra);
+return hd('Recommendations','Suggested resource changes for the coming hours. Select a row to see why.')+`<div class="ctl"><select aria-label="Cluster" onchange="st.rc=this.value;go()"><option value="all">All clusters</option><option value="google" ${st.rc=='google'?'selected':''}>Google 2019</option><option value="alibaba" ${st.rc=='alibaba'?'selected':''}>Alibaba 2018</option></select><select aria-label="Action" onchange="st.ra=this.value;go()"><option value="all">All actions</option>${Object.entries(AL).map(([k,l])=>`<option value="${k}" ${st.ra==k?'selected':''}>${l}</option>`).join('')}</select></div>
+<div class="tw"><table><tr><th>Cluster</th><th>Resource</th><th>Action</th><th>Change</th><th>Window</th><th>Confidence</th></tr>${rows.length?rows.map(r=>`<tr class="row" tabindex="0" onclick="st.open=st.open==${r.i}?null:${r.i};go()" onkeydown="if(event.key=='Enter')this.click()"><td>${CL[r.c]}</td><td>${r.r}</td><td class="${r.a}">${AL[r.a]}</td><td>${r.p?r.p+'%':'None'}</td><td>${r.w}</td><td>${pct(r.f)}</td></tr>${st.open==r.i?`<tr class="why"><td colspan="6">${r.why}</td></tr>`:''}`).join(''):`<tr><td colspan="6">No recommendations match these filters. Clear a filter to see all items.</td></tr>`}</table></div>`},
+'/models'(){const s={cpu:[.036,.027,.94,'2.1M'],memory:[.029,.022,.95,'2.1M'],task:[118,86,.91,'1.4M']};
+return hd('Models','Three gradient boosted tree models trained in Spark MLlib.')+Object.keys(MET).map(m=>`<div class="model"><h2>${MET[m]}</h2><div class="kv" style="margin-top:0"><div><span>RMSE</span><b>${s[m][0]}</b></div><div><span>MAE</span><b>${s[m][1]}</b></div><div><span>R squared</span><b>${s[m][2]}</b></div><div><span>Training rows</span><b>${s[m][3]}</b></div></div><h3 style="margin:24px 0 8px">Most useful inputs</h3>${FEAT[m].map(([n,v])=>`<div class="fr"><span>${n}</span><i style="width:${v/.34*100}%"></i><span>${pct(v)}</span></div>`).join('')}</div>`).join('')},
+'/pipeline'(){return hd('Pipeline','How raw cluster traces become forecasts and recommendations.')+`<ol class="steps" style="margin-top:40px">${STAGES.map(([n,t,s,d])=>`<li><div><h3>${n}</h3><p>${d}</p><p class="tool">${t}. Status: ${s}.</p></div></li>`).join('')}</ol>`},
+'/about'(){return hd('About','Why this project exists and what it can and cannot tell you.')+`<div class="p" style="margin-top:40px"><p>Cloud systems usually add or remove capacity after load has already changed. That causes slow responses during spikes and wasted capacity afterwards. This project forecasts load ahead of time so capacity can change first.</p><p>Traces from two real clusters are loaded into HDFS and mapped to one schema. Three gradient boosted tree models then predict CPU usage, memory use and task arrivals.</p><p>The data comes from the <a href="https://github.com/google/cluster-data">Google Cluster Trace 2019</a> and the <a href="https://github.com/alibaba/clusterdata">Alibaba Cluster Trace 2018</a>.</p><p>Limits: the two traces come from different years and workloads, and forecasts get less reliable further ahead. The values on this page are sample data.</p><p><a href="https://github.com/shabnam311/Cross-Cloud-Predictive-Resource-Management-with-Hadoop-and-Spark">View the repository on GitHub</a></p></div>`}};
+window.setMet=k=>{st.met=k;go()};window.setFc=k=>{st.fc=k;go()};window.st=st;
+function go(){const r=location.hash.slice(1)||'/',pg=P[r];pend.length=0;
+$('#app').innerHTML=pg?pg():`<h1>Page not found</h1><p class="lede"><a href="#/">Go to the overview</a></p>`;
+document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')=='#'+r));
+pend.forEach(f=>f());if(!go.n){go.n=1}else window.scrollTo(0,0)}
+addEventListener('hashchange',()=>{go()});go();
+</script>
+</body>
+</html>
