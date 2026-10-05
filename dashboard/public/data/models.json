@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "isSample": true,
+  "models": [
+    {
+      "metric": "cpu",
+      "rmse": 0.05,
+      "mae": 0.037,
+      "r2": 0.891,
+      "trainRows": 38400000,
+      "features": [
+        {
+          "name": "cpu_lag_1",
+          "importance": 0.342
+        },
+        {
+          "name": "cpu_avg_5m",
+          "importance": 0.228
+        },
+        {
+          "name": "cpu_lag_2",
+          "importance": 0.145
+        },
+        {
+          "name": "mem_usage_norm",
+          "importance": 0.089
+        },
+        {
+          "name": "hour_sin",
+          "importance": 0.065
+        },
+        {
+          "name": "task_arrival_count",
+          "importance": 0.052
+        },
+        {
+          "name": "cpu_avg_15m",
+          "importance": 0.044
+        },
+        {
+          "name": "error_count",
+          "importance": 0.035
+        }
+      ]
+    },
+    {
+      "metric": "memory",
+      "rmse": 0.04,
+      "mae": 0.03,
+      "r2": 0.919,
+      "trainRows": 38400000,
+      "features": [
+        {
+          "name": "mem_lag_1",
+          "importance": 0.381
+        },
+        {
+          "name": "mem_avg_5m",
+          "importance": 0.246
+        },
+        {
+          "name": "mem_lag_2",
+          "importance": 0.132
+        },
+        {
+          "name": "cpu_usage_norm",
+          "importance": 0.078
+        },
+        {
+          "name": "instance_arrival_count",
+          "importance": 0.058
+        },
+        {
+          "name": "hour_cos",
+          "importance": 0.041
+        },
+        {
+          "name": "mem_avg_15m",
+          "importance": 0.039
+        },
+        {
+          "name": "error_count",
+          "importance": 0.025
+        }
+      ]
+    },
+    {
+      "metric": "taskArrival",
+      "rmse": 27.3,
+      "mae": 19,
+      "r2": 0.853,
+      "trainRows": 38400000,
+      "features": [
+        {
+          "name": "arrival_lag_1",
+          "importance": 0.315
+        },
+        {
+          "name": "arrival_rolling_mean_5",
+          "importance": 0.218
+        },
+        {
+          "name": "task_lag_1",
+          "importance": 0.154
+        },
+        {
+          "name": "hour_sin",
+          "importance": 0.102
+        },
+        {
+          "name": "hour_cos",
+          "importance": 0.076
+        },
+        {
+          "name": "arrival_rolling_std_5",
+          "importance": 0.055
+        },
+        {
+          "name": "cpu_avg_5m",
+          "importance": 0.045
+        },
+        {
+          "name": "instance_avg_5m",
+          "importance": 0.035
+        }
+      ]
+    }
+  ]
+}

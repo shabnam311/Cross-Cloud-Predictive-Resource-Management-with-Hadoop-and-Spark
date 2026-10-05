@@ -7,6 +7,6 @@ export const colors = {
   pine: '#2F5D50',
   pineFaint: 'rgba(47, 93, 80, 0.08)',
   google: '#3B6EA8',
-  alibaba: '#C98A2B',
+  alibaba: '#A9691A',
   brick: '#A3473B',
 };

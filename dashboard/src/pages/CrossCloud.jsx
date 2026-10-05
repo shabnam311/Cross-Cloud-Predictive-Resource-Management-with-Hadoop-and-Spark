@@ -19,25 +19,25 @@ import { formatDecimal } from '../lib/format';
 export function CrossCloud() {
   const { data, loading, error } = useData('comparison.json');
 
-  // Prepare grouped bar chart data for normalized error comparison
-  // Same cloud (Google->Google, Alibaba->Alibaba) vs Cross cloud (Google->Alibaba, Alibaba->Google)
-  const chartData = [
-    {
-      name: 'CPU usage',
-      sameCloud: 0.05,
-      crossCloud: 0.091,
-    },
-    {
-      name: 'Memory',
-      sameCloud: 0.04,
-      crossCloud: 0.078,
-    },
-    {
-      name: 'Task arrival (/100)',
-      sameCloud: 0.272,
-      crossCloud: 0.564,
-    },
-  ];
+  // Compute grouped bar chart data from comparison.json rows
+  const metricKeys = ['cpu', 'memory', 'taskArrival'];
+  const metricLabels = { cpu: 'CPU usage', memory: 'Memory', taskArrival: 'Task arrival' };
+
+  const avgRmse = (rows, metric, same) => {
+    const filtered = rows.filter(
+      (r) => r.metric === metric && (r.trainOn === r.testOn) === same
+    );
+    if (filtered.length === 0) return 0;
+    return filtered.reduce((t, r) => t + r.rmse, 0) / filtered.length;
+  };
+
+  const chartData = data?.rows
+    ? metricKeys.map((m) => ({
+        name: metricLabels[m],
+        sameCloud: avgRmse(data.rows, m, true),
+        crossCloud: avgRmse(data.rows, m, false),
+      }))
+    : [];
 
   // Group rows by metric to find the lowest RMSE for each metric
   const bestRmseByMetric = {};

@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "isSample": true,
+  "rows": [
+    {
+      "metric": "cpu",
+      "trainOn": "Google 2019",
+      "testOn": "Google 2019",
+      "rmse": 0.052,
+      "mae": 0.039,
+      "r2": 0.884
+    },
+    {
+      "metric": "cpu",
+      "trainOn": "Google 2019",
+      "testOn": "Alibaba 2018",
+      "rmse": 0.089,
+      "mae": 0.067,
+      "r2": 0.718
+    },
+    {
+      "metric": "cpu",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Alibaba 2018",
+      "rmse": 0.048,
+      "mae": 0.036,
+      "r2": 0.899
+    },
+    {
+      "metric": "cpu",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Google 2019",
+      "rmse": 0.094,
+      "mae": 0.071,
+      "r2": 0.692
+    },
+    {
+      "metric": "memory",
+      "trainOn": "Google 2019",
+      "testOn": "Google 2019",
+      "rmse": 0.041,
+      "mae": 0.031,
+      "r2": 0.912
+    },
+    {
+      "metric": "memory",
+      "trainOn": "Google 2019",
+      "testOn": "Alibaba 2018",
+      "rmse": 0.076,
+      "mae": 0.058,
+      "r2": 0.764
+    },
+    {
+      "metric": "memory",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Alibaba 2018",
+      "rmse": 0.039,
+      "mae": 0.029,
+      "r2": 0.925
+    },
+    {
+      "metric": "memory",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Google 2019",
+      "rmse": 0.081,
+      "mae": 0.062,
+      "r2": 0.739
+    },
+    {
+      "metric": "taskArrival",
+      "trainOn": "Google 2019",
+      "testOn": "Google 2019",
+      "rmse": 28.4,
+      "mae": 19.8,
+      "r2": 0.841
+    },
+    {
+      "metric": "taskArrival",
+      "trainOn": "Google 2019",
+      "testOn": "Alibaba 2018",
+      "rmse": 54.2,
+      "mae": 38.6,
+      "r2": 0.612
+    },
+    {
+      "metric": "taskArrival",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Alibaba 2018",
+      "rmse": 26.1,
+      "mae": 18.2,
+      "r2": 0.865
+    },
+    {
+      "metric": "taskArrival",
+      "trainOn": "Alibaba 2018",
+      "testOn": "Google 2019",
+      "rmse": 58.7,
+      "mae": 41.5,
+      "r2": 0.583
+    }
+  ]
+}

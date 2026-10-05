@@ -4,23 +4,23 @@ const MONTH_NAMES = [
 ];
 
 export function formatPercent(value, decimals = 0) {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  if (value === null || value === undefined || Number.isNaN(value)) return '-';
   const num = typeof value === 'number' ? value * 100 : parseFloat(value) * 100;
   return `${num.toFixed(decimals)}%`;
 }
 
 export function formatNumber(value) {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  if (value === null || value === undefined || Number.isNaN(value)) return '-';
   return new Intl.NumberFormat('en-GB').format(value);
 }
 
 export function formatDecimal(value, decimals = 3) {
-  if (value === null || value === undefined || Number.isNaN(value)) return '—';
+  if (value === null || value === undefined || Number.isNaN(value)) return '-';
   return Number(value).toFixed(decimals);
 }
 
 export function formatDate(isoString) {
-  if (!isoString) return '—';
+  if (!isoString) return '-';
   const date = new Date(isoString);
   if (Number.isNaN(date.getTime())) return isoString;
 

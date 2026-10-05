@@ -60,15 +60,15 @@ const overviewData = {
 };
 
 // 2. forecasts.json
-// 48 hours in 5 minute steps = 48 * 12 = 576 points. Last 6 points actual = null.
+// 30 minute steps for 48 hours = 96 points. The last 6 points are the forecast (3 hours).
 const startTime = new Date('2026-10-02T12:00:00.000Z').getTime();
-const totalSteps = 576;
+const totalSteps = 96;
 const horizonSteps = 6;
 
 function generateTimeSeries(metric, clusterId) {
   const series = [];
   for (let i = 0; i < totalSteps; i++) {
-    const timeMs = startTime + i * 5 * 60 * 1000;
+    const timeMs = startTime + i * 30 * 60 * 1000;
     const date = new Date(timeMs);
     const hour = date.getUTCHours() + date.getUTCMinutes() / 60;
     
@@ -225,16 +225,23 @@ const recommendationsData = {
   ]
 };
 
-// 5. models.json
+// 5. models.json - derive summary stats from same-cloud comparison rows
+function sameCloudAvg(metric, field) {
+  const rows = comparisonData.rows.filter(
+    (r) => r.metric === metric && r.trainOn === r.testOn
+  );
+  return rows.reduce((t, r) => t + r[field], 0) / rows.length;
+}
+
 const modelsData = {
   generatedAt,
   isSample,
   models: [
     {
       metric: 'cpu',
-      rmse: 0.048,
-      mae: 0.036,
-      r2: 0.899,
+      rmse: parseFloat(sameCloudAvg('cpu', 'rmse').toFixed(3)),
+      mae: parseFloat(sameCloudAvg('cpu', 'mae').toFixed(3)),
+      r2: parseFloat(sameCloudAvg('cpu', 'r2').toFixed(3)),
       trainRows: 38400000,
       features: [
         { name: 'cpu_lag_1', importance: 0.342 },
@@ -249,9 +256,9 @@ const modelsData = {
     },
     {
       metric: 'memory',
-      rmse: 0.039,
-      mae: 0.029,
-      r2: 0.925,
+      rmse: parseFloat(sameCloudAvg('memory', 'rmse').toFixed(3)),
+      mae: parseFloat(sameCloudAvg('memory', 'mae').toFixed(3)),
+      r2: parseFloat(sameCloudAvg('memory', 'r2').toFixed(3)),
       trainRows: 38400000,
       features: [
         { name: 'mem_lag_1', importance: 0.381 },
@@ -266,9 +273,9 @@ const modelsData = {
     },
     {
       metric: 'taskArrival',
-      rmse: 26.1,
-      mae: 18.2,
-      r2: 0.865,
+      rmse: parseFloat(sameCloudAvg('taskArrival', 'rmse').toFixed(1)),
+      mae: parseFloat(sameCloudAvg('taskArrival', 'mae').toFixed(1)),
+      r2: parseFloat(sameCloudAvg('taskArrival', 'r2').toFixed(3)),
       trainRows: 38400000,
       features: [
         { name: 'arrival_lag_1', importance: 0.315 },

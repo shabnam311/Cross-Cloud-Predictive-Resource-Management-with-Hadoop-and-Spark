@@ -51,7 +51,7 @@ export function Overview() {
               </span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Task arrival rate</span>
+              <span className="stat-label">Forecast task arrival</span>
               <span className="stat-value">
                 {formatNumber(overview.nextHour?.[selectedCluster]?.taskArrival)} / min
               </span>
@@ -110,7 +110,7 @@ export function Overview() {
                       {forecasts.series.cpu[selectedCluster].slice(-24).map((row) => (
                         <tr key={row.t}>
                           <td>{formatDate(row.t)}</td>
-                          <td>{row.actual !== null ? formatPercent(row.actual, 2) : '—'}</td>
+                          <td>{row.actual !== null ? formatPercent(row.actual, 2) : '-'}</td>
                           <td>{formatPercent(row.predicted, 2)}</td>
                         </tr>
                       ))}

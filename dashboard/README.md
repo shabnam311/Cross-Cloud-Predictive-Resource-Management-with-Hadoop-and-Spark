@@ -67,6 +67,7 @@ The dashboard is completely decoupled from the data pipeline and renders plain s
 4. Click **Deploy**. No environment secrets or serverless functions are required.
 
 ### Deploying to GitHub Pages
-1. In your GitHub repository, navigate to **Settings** > **Pages**.
-2. Under **Build and deployment** > **Source**, select **GitHub Actions**.
-3. Push changes to the `main` branch. The automated workflow in `.github/workflows/deploy-pages.yml` will automatically build the dashboard with the correct repository base path and publish it to GitHub Pages.
+1. In your GitHub repository fork, open the **Actions** tab. If workflows are disabled, click the green button to enable GitHub Actions.
+2. Navigate to **Settings** > **Pages**.
+3. Under **Build and deployment** > **Source**, select **GitHub Actions**.
+4. Push changes to the `main` branch. The automated workflow in `.github/workflows/deploy-pages.yml` will automatically build the dashboard with the correct repository base path and publish it to GitHub Pages.

@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "isSample": true,
+  "stages": [
+    {
+      "id": 1,
+      "name": "Docker infrastructure setup",
+      "tool": "Docker Compose",
+      "status": "done",
+      "description": "Deploys Hadoop NameNode, DataNodes, Spark Master, Workers and History Server in a bridged network."
+    },
+    {
+      "id": 2,
+      "name": "HDFS cluster trace ingestion",
+      "tool": "Hadoop HDFS",
+      "status": "done",
+      "description": "Ingests raw Google Cluster Trace 2019 and Alibaba Cluster Trace 2018 datasets into distributed storage."
+    },
+    {
+      "id": 3,
+      "name": "Schema standardisation MapReduce",
+      "tool": "Apache Spark",
+      "status": "done",
+      "description": "Unifies disparate column schemas, timestamp units and resource normalisation across both cloud providers."
+    },
+    {
+      "id": 4,
+      "name": "Synthetic syslog generation and regex extraction",
+      "tool": "Scala / Spark",
+      "status": "done",
+      "description": "Generates unstructured cluster log messages and extracts error counts using regular expressions."
+    },
+    {
+      "id": 5,
+      "name": "Gradient Boosted Tree predictive models",
+      "tool": "Spark MLlib",
+      "status": "in_progress",
+      "description": "Trains GBT regressors and random forest hurdle classifiers for CPU, memory and task arrival rate forecasting."
+    },
+    {
+      "id": 6,
+      "name": "Recommendation engine",
+      "tool": "Scala / Rules Engine",
+      "status": "in_progress",
+      "description": "Translates workload forecasts into automated proactive actions such as scale up, scale down or hold."
+    },
+    {
+      "id": 7,
+      "name": "Static reporting dashboard",
+      "tool": "React / Vite",
+      "status": "in_progress",
+      "description": "Renders proactive resource forecasts, cross cloud comparison metrics and recommendations in a static interface."
+    },
+    {
+      "id": 8,
+      "name": "Kubernetes production deployment",
+      "tool": "Kubernetes / Helm",
+      "status": "planned",
+      "description": "Optional container orchestration deployment for real time cluster autoscaling controllers."
+    }
+  ]
+}
