@@ -110,7 +110,7 @@ export function Overview() {
                       {forecasts.series.cpu[selectedCluster].slice(-24).map((row) => (
                         <tr key={row.t}>
                           <td>{formatDate(row.t)}</td>
-                          <td>{row.actual !== null ? formatPercent(row.actual, 2) : '-'}</td>
+                          <td>{row.actual !== null ? formatPercent(row.actual, 2) : 'Not yet known'}</td>
                           <td>{formatPercent(row.predicted, 2)}</td>
                         </tr>
                       ))}

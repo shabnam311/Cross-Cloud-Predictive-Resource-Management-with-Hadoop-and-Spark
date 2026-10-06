@@ -43,18 +43,22 @@ export function Models() {
               {/* Inline metric stats */}
               <div className="stat-row" style={{ padding: '16px 0' }}>
                 <div className="stat-item">
-                  <span className="stat-label">RMSE</span>
+                  <span className="stat-label">
+                    {model.metric === 'taskArrival' ? 'RMSE (tasks/min)' : 'RMSE (normalised)'}
+                  </span>
                   <span className="stat-value">
                     {model.metric === 'taskArrival'
-                      ? formatDecimal(model.rmse, 1)
+                      ? `${formatDecimal(model.rmse, 1)} / min`
                       : formatDecimal(model.rmse, 3)}
                   </span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-label">MAE</span>
+                  <span className="stat-label">
+                    {model.metric === 'taskArrival' ? 'MAE (tasks/min)' : 'MAE (normalised)'}
+                  </span>
                   <span className="stat-value">
                     {model.metric === 'taskArrival'
-                      ? formatDecimal(model.mae, 1)
+                      ? `${formatDecimal(model.mae, 1)} / min`
                       : formatDecimal(model.mae, 3)}
                   </span>
                 </div>

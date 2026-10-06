@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "generatedAt": "2026-10-06T04:00:00.000Z",
   "isSample": true,
   "items": [
     {
@@ -8,8 +8,8 @@
       "resource": "cpu",
       "action": "scale_up",
       "magnitudePercent": 15,
-      "windowStart": "2026-10-04T12:00:00.000Z",
-      "windowEnd": "2026-10-04T13:00:00.000Z",
+      "windowStart": "2026-10-06T04:00:00.000Z",
+      "windowEnd": "2026-10-06T05:00:00.000Z",
       "confidence": 0.92,
       "reason": "Forecast indicates sustained CPU utilization above 75% for 45 consecutive minutes during afternoon peak."
     },
@@ -19,8 +19,8 @@
       "resource": "memory",
       "action": "scale_up",
       "magnitudePercent": 12,
-      "windowStart": "2026-10-04T12:15:00.000Z",
-      "windowEnd": "2026-10-04T13:15:00.000Z",
+      "windowStart": "2026-10-06T04:15:00.000Z",
+      "windowEnd": "2026-10-06T05:15:00.000Z",
       "confidence": 0.88,
       "reason": "Memory pressure predicted to cross 85% threshold driven by incoming batch queue accumulation."
     },
@@ -30,8 +30,8 @@
       "resource": "memory",
       "action": "hold",
       "magnitudePercent": 0,
-      "windowStart": "2026-10-04T12:00:00.000Z",
-      "windowEnd": "2026-10-04T13:00:00.000Z",
+      "windowStart": "2026-10-06T04:00:00.000Z",
+      "windowEnd": "2026-10-06T05:00:00.000Z",
       "confidence": 0.95,
       "reason": "Memory consumption is stable at 74% with sufficient headroom for short bursts."
     },
@@ -41,8 +41,8 @@
       "resource": "cpu",
       "action": "scale_down",
       "magnitudePercent": 8,
-      "windowStart": "2026-10-04T13:30:00.000Z",
-      "windowEnd": "2026-10-04T14:30:00.000Z",
+      "windowStart": "2026-10-06T05:30:00.000Z",
+      "windowEnd": "2026-10-06T06:30:00.000Z",
       "confidence": 0.84,
       "reason": "Workload completion expected to reduce CPU demand below 40% after ongoing map tasks finish."
     },
@@ -52,8 +52,8 @@
       "resource": "taskArrival",
       "action": "scale_up",
       "magnitudePercent": 20,
-      "windowStart": "2026-10-04T14:00:00.000Z",
-      "windowEnd": "2026-10-04T15:00:00.000Z",
+      "windowStart": "2026-10-06T06:00:00.000Z",
+      "windowEnd": "2026-10-06T07:00:00.000Z",
       "confidence": 0.89,
       "reason": "Task arrival rate is projected to climb past 550 tasks per minute, requiring extra worker nodes."
     },
@@ -63,8 +63,8 @@
       "resource": "taskArrival",
       "action": "hold",
       "magnitudePercent": 0,
-      "windowStart": "2026-10-04T12:00:00.000Z",
-      "windowEnd": "2026-10-04T13:00:00.000Z",
+      "windowStart": "2026-10-06T04:00:00.000Z",
+      "windowEnd": "2026-10-06T05:00:00.000Z",
       "confidence": 0.91,
       "reason": "Task arrival velocity aligns with current node capacity without risk of scheduling delays."
     }

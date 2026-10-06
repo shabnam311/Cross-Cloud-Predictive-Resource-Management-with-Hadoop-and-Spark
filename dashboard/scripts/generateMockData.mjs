@@ -21,49 +21,20 @@ function mulberry32(a) {
 }
 
 const rng = mulberry32(20261004);
-const generatedAt = '2026-10-04T12:00:00.000Z';
+
+// Current timestamp rounded to previous 30-minute boundary (Item 17)
+const nowMs = Math.floor(Date.now() / (30 * 60 * 1000)) * (30 * 60 * 1000);
+const generatedAt = new Date(nowMs).toISOString();
 const isSample = true;
 
-// 1. overview.json
-const overviewData = {
-  generatedAt,
-  isSample,
-  window: '1h',
-  nextHour: {
-    google: {
-      cpu: 0.68,
-      memory: 0.74,
-      taskArrival: 420
-    },
-    alibaba: {
-      cpu: 0.62,
-      memory: 0.81,
-      taskArrival: 510
-    }
-  },
-  clusters: [
-    {
-      id: 'google',
-      label: 'Google Cluster 2019',
-      cpuUtilization: 0.68,
-      memoryUtilization: 0.74,
-      tasksPerMinute: 420
-    },
-    {
-      id: 'alibaba',
-      label: 'Alibaba Cluster 2018',
-      cpuUtilization: 0.62,
-      memoryUtilization: 0.81,
-      tasksPerMinute: 510
-    }
-  ]
-};
-
-// 2. forecasts.json
+// -------------------------------------------------------------
+// 1. forecasts.json
 // 30 minute steps for 48 hours = 96 points. The last 6 points are the forecast (3 hours).
-const startTime = new Date('2026-10-02T12:00:00.000Z').getTime();
+// Index 90 is "now" (generatedAt). Index 92 is 1 hour ahead (Item 17, 20, 21).
+// -------------------------------------------------------------
 const totalSteps = 96;
 const horizonSteps = 6;
+const startTime = nowMs - 90 * 30 * 60 * 1000;
 
 function generateTimeSeries(metric, clusterId) {
   const series = [];
@@ -71,7 +42,7 @@ function generateTimeSeries(metric, clusterId) {
     const timeMs = startTime + i * 30 * 60 * 1000;
     const date = new Date(timeMs);
     const hour = date.getUTCHours() + date.getUTCMinutes() / 60;
-    
+
     // Daily diurnal cycle: peaks at hour 14-16, troughs at hour 3-5
     const cycle = Math.sin(((hour - 8) / 24) * 2 * Math.PI) * 0.15;
     const noise = (rng() - 0.5) * 0.06;
@@ -87,7 +58,7 @@ function generateTimeSeries(metric, clusterId) {
       const clusterBase = clusterId === 'google' ? 0.68 : 0.72;
       baseActual = Math.min(0.90, Math.max(0.45, clusterBase + cycle * 0.8 + noise));
     } else {
-      // taskArrival (tasks per 5 min)
+      // taskArrival (tasks per minute)
       const clusterBase = clusterId === 'google' ? 400 : 480;
       const arrivalCycle = cycle * 300;
       const arrivalNoise = (rng() - 0.5) * 60;
@@ -131,27 +102,89 @@ const forecastsData = {
   }
 };
 
-// 3. comparison.json
-const comparisonData = {
+// -------------------------------------------------------------
+// 2. overview.json
+// Derives 1-hour-ahead forecasts directly from index 92 of forecastsData (Item 20)
+// -------------------------------------------------------------
+const nextHourGoogleCpu = forecastsData.series.cpu.google[92].predicted;
+const nextHourGoogleMem = forecastsData.series.memory.google[92].predicted;
+const nextHourGoogleTask = forecastsData.series.taskArrival.google[92].predicted;
+const nextHourAlibabaCpu = forecastsData.series.cpu.alibaba[92].predicted;
+const nextHourAlibabaMem = forecastsData.series.memory.alibaba[92].predicted;
+const nextHourAlibabaTask = forecastsData.series.taskArrival.alibaba[92].predicted;
+
+const overviewData = {
   generatedAt,
   isSample,
-  rows: [
-    { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.052, mae: 0.039, r2: 0.884 },
-    { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.089, mae: 0.067, r2: 0.718 },
-    { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.048, mae: 0.036, r2: 0.899 },
-    { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.094, mae: 0.071, r2: 0.692 },
-    { metric: 'memory', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.041, mae: 0.031, r2: 0.912 },
-    { metric: 'memory', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.076, mae: 0.058, r2: 0.764 },
-    { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.039, mae: 0.029, r2: 0.925 },
-    { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.081, mae: 0.062, r2: 0.739 },
-    { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 28.4, mae: 19.8, r2: 0.841 },
-    { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 54.2, mae: 38.6, r2: 0.612 },
-    { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 26.1, mae: 18.2, r2: 0.865 },
-    { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 58.7, mae: 41.5, r2: 0.583 }
+  window: '1h',
+  nextHour: {
+    google: {
+      cpu: nextHourGoogleCpu,
+      memory: nextHourGoogleMem,
+      taskArrival: nextHourGoogleTask
+    },
+    alibaba: {
+      cpu: nextHourAlibabaCpu,
+      memory: nextHourAlibabaMem,
+      taskArrival: nextHourAlibabaTask
+    }
+  },
+  clusters: [
+    {
+      id: 'google',
+      label: 'Google Cluster 2019',
+      cpuUtilization: nextHourGoogleCpu,
+      memoryUtilization: nextHourGoogleMem,
+      tasksPerMinute: nextHourGoogleTask
+    },
+    {
+      id: 'alibaba',
+      label: 'Alibaba Cluster 2018',
+      cpuUtilization: nextHourAlibabaCpu,
+      memoryUtilization: nextHourAlibabaMem,
+      tasksPerMinute: nextHourAlibabaTask
+    }
   ]
 };
 
+// -------------------------------------------------------------
+// 3. comparison.json
+// Includes relativeError (RMSE / target mean) and unit per Item 9
+// -------------------------------------------------------------
+const rawComparisonRows = [
+  { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.052, mae: 0.039, r2: 0.884, targetMean: 0.56, unit: 'fraction' },
+  { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.089, mae: 0.067, r2: 0.718, targetMean: 0.56, unit: 'fraction' },
+  { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.048, mae: 0.036, r2: 0.899, targetMean: 0.56, unit: 'fraction' },
+  { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.094, mae: 0.071, r2: 0.692, targetMean: 0.56, unit: 'fraction' },
+  { metric: 'memory', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.041, mae: 0.031, r2: 0.912, targetMean: 0.70, unit: 'fraction' },
+  { metric: 'memory', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.076, mae: 0.058, r2: 0.764, targetMean: 0.70, unit: 'fraction' },
+  { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.039, mae: 0.029, r2: 0.925, targetMean: 0.70, unit: 'fraction' },
+  { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.081, mae: 0.062, r2: 0.739, targetMean: 0.70, unit: 'fraction' },
+  { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 28.4, mae: 19.8, r2: 0.841, targetMean: 440, unit: 'tasks/min' },
+  { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 54.2, mae: 38.6, r2: 0.612, targetMean: 440, unit: 'tasks/min' },
+  { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 26.1, mae: 18.2, r2: 0.865, targetMean: 440, unit: 'tasks/min' },
+  { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 58.7, mae: 41.5, r2: 0.583, targetMean: 440, unit: 'tasks/min' }
+];
+
+const comparisonData = {
+  generatedAt,
+  isSample,
+  rows: rawComparisonRows.map((r) => ({
+    metric: r.metric,
+    trainOn: r.trainOn,
+    testOn: r.testOn,
+    rmse: r.rmse,
+    mae: r.mae,
+    r2: r.r2,
+    relativeError: parseFloat((r.rmse / r.targetMean).toFixed(3)),
+    unit: r.unit
+  }))
+};
+
+// -------------------------------------------------------------
 // 4. recommendations.json
+// Window timestamps aligned with generatedAt
+// -------------------------------------------------------------
 const recommendationsData = {
   generatedAt,
   isSample,
@@ -162,8 +195,8 @@ const recommendationsData = {
       resource: 'cpu',
       action: 'scale_up',
       magnitudePercent: 15,
-      windowStart: '2026-10-04T12:00:00.000Z',
-      windowEnd: '2026-10-04T13:00:00.000Z',
+      windowStart: new Date(nowMs).toISOString(),
+      windowEnd: new Date(nowMs + 60 * 60 * 1000).toISOString(),
       confidence: 0.92,
       reason: 'Forecast indicates sustained CPU utilization above 75% for 45 consecutive minutes during afternoon peak.'
     },
@@ -173,8 +206,8 @@ const recommendationsData = {
       resource: 'memory',
       action: 'scale_up',
       magnitudePercent: 12,
-      windowStart: '2026-10-04T12:15:00.000Z',
-      windowEnd: '2026-10-04T13:15:00.000Z',
+      windowStart: new Date(nowMs + 15 * 60 * 1000).toISOString(),
+      windowEnd: new Date(nowMs + 75 * 60 * 1000).toISOString(),
       confidence: 0.88,
       reason: 'Memory pressure predicted to cross 85% threshold driven by incoming batch queue accumulation.'
     },
@@ -184,8 +217,8 @@ const recommendationsData = {
       resource: 'memory',
       action: 'hold',
       magnitudePercent: 0,
-      windowStart: '2026-10-04T12:00:00.000Z',
-      windowEnd: '2026-10-04T13:00:00.000Z',
+      windowStart: new Date(nowMs).toISOString(),
+      windowEnd: new Date(nowMs + 60 * 60 * 1000).toISOString(),
       confidence: 0.95,
       reason: 'Memory consumption is stable at 74% with sufficient headroom for short bursts.'
     },
@@ -195,8 +228,8 @@ const recommendationsData = {
       resource: 'cpu',
       action: 'scale_down',
       magnitudePercent: 8,
-      windowStart: '2026-10-04T13:30:00.000Z',
-      windowEnd: '2026-10-04T14:30:00.000Z',
+      windowStart: new Date(nowMs + 90 * 60 * 1000).toISOString(),
+      windowEnd: new Date(nowMs + 150 * 60 * 1000).toISOString(),
       confidence: 0.84,
       reason: 'Workload completion expected to reduce CPU demand below 40% after ongoing map tasks finish.'
     },
@@ -206,8 +239,8 @@ const recommendationsData = {
       resource: 'taskArrival',
       action: 'scale_up',
       magnitudePercent: 20,
-      windowStart: '2026-10-04T14:00:00.000Z',
-      windowEnd: '2026-10-04T15:00:00.000Z',
+      windowStart: new Date(nowMs + 120 * 60 * 1000).toISOString(),
+      windowEnd: new Date(nowMs + 180 * 60 * 1000).toISOString(),
       confidence: 0.89,
       reason: 'Task arrival rate is projected to climb past 550 tasks per minute, requiring extra worker nodes.'
     },
@@ -217,15 +250,17 @@ const recommendationsData = {
       resource: 'taskArrival',
       action: 'hold',
       magnitudePercent: 0,
-      windowStart: '2026-10-04T12:00:00.000Z',
-      windowEnd: '2026-10-04T13:00:00.000Z',
+      windowStart: new Date(nowMs).toISOString(),
+      windowEnd: new Date(nowMs + 60 * 60 * 1000).toISOString(),
       confidence: 0.91,
       reason: 'Task arrival velocity aligns with current node capacity without risk of scheduling delays.'
     }
   ]
 };
 
-// 5. models.json - derive summary stats from same-cloud comparison rows
+// -------------------------------------------------------------
+// 5. models.json - derive summary stats from same-cloud comparison rows (Item 10)
+// -------------------------------------------------------------
 function sameCloudAvg(metric, field) {
   const rows = comparisonData.rows.filter(
     (r) => r.metric === metric && r.trainOn === r.testOn
@@ -242,6 +277,7 @@ const modelsData = {
       rmse: parseFloat(sameCloudAvg('cpu', 'rmse').toFixed(3)),
       mae: parseFloat(sameCloudAvg('cpu', 'mae').toFixed(3)),
       r2: parseFloat(sameCloudAvg('cpu', 'r2').toFixed(3)),
+      unit: 'fraction',
       trainRows: 38400000,
       features: [
         { name: 'cpu_lag_1', importance: 0.342 },
@@ -259,6 +295,7 @@ const modelsData = {
       rmse: parseFloat(sameCloudAvg('memory', 'rmse').toFixed(3)),
       mae: parseFloat(sameCloudAvg('memory', 'mae').toFixed(3)),
       r2: parseFloat(sameCloudAvg('memory', 'r2').toFixed(3)),
+      unit: 'fraction',
       trainRows: 38400000,
       features: [
         { name: 'mem_lag_1', importance: 0.381 },
@@ -276,6 +313,7 @@ const modelsData = {
       rmse: parseFloat(sameCloudAvg('taskArrival', 'rmse').toFixed(1)),
       mae: parseFloat(sameCloudAvg('taskArrival', 'mae').toFixed(1)),
       r2: parseFloat(sameCloudAvg('taskArrival', 'r2').toFixed(3)),
+      unit: 'tasks/min',
       trainRows: 38400000,
       features: [
         { name: 'arrival_lag_1', importance: 0.315 },
@@ -291,7 +329,9 @@ const modelsData = {
   ]
 };
 
+// -------------------------------------------------------------
 // 6. pipeline.json
+// -------------------------------------------------------------
 const pipelineData = {
   generatedAt,
   isSample,

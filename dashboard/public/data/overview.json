@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "generatedAt": "2026-10-06T04:00:00.000Z",
   "isSample": true,
   "window": "1h",
   "nextHour": {
     "google": {
-      "cpu": 0.68,
-      "memory": 0.74,
-      "taskArrival": 420
+      "cpu": 0.4616,
+      "memory": 0.5891,
+      "taskArrival": 368
     },
     "alibaba": {
-      "cpu": 0.62,
-      "memory": 0.81,
-      "taskArrival": 510
+      "cpu": 0.4114,
+      "memory": 0.6373,
+      "taskArrival": 449
     }
   },
   "clusters": [
     {
       "id": "google",
       "label": "Google Cluster 2019",
-      "cpuUtilization": 0.68,
-      "memoryUtilization": 0.74,
-      "tasksPerMinute": 420
+      "cpuUtilization": 0.4616,
+      "memoryUtilization": 0.5891,
+      "tasksPerMinute": 368
     },
     {
       "id": "alibaba",
       "label": "Alibaba Cluster 2018",
-      "cpuUtilization": 0.62,
-      "memoryUtilization": 0.81,
-      "tasksPerMinute": 510
+      "cpuUtilization": 0.4114,
+      "memoryUtilization": 0.6373,
+      "tasksPerMinute": 449
     }
   ]
 }

@@ -35,9 +35,9 @@ jobs:
         working-directory: dashboard
         run: npm install
 
-      - name: Generate mock data
+      - name: Generate mock data if missing
         working-directory: dashboard
-        run: npm run mock
+        run: test -f public/data/overview.json || npm run mock
 
       - name: Build dashboard
         working-directory: dashboard

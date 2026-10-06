@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "generatedAt": "2026-10-06T04:00:00.000Z",
   "isSample": true,
   "models": [
     {
@@ -7,6 +7,7 @@
       "rmse": 0.05,
       "mae": 0.037,
       "r2": 0.891,
+      "unit": "fraction",
       "trainRows": 38400000,
       "features": [
         {
@@ -48,6 +49,7 @@
       "rmse": 0.04,
       "mae": 0.03,
       "r2": 0.919,
+      "unit": "fraction",
       "trainRows": 38400000,
       "features": [
         {
@@ -89,6 +91,7 @@
       "rmse": 27.3,
       "mae": 19,
       "r2": 0.853,
+      "unit": "tasks/min",
       "trainRows": 38400000,
       "features": [
         {

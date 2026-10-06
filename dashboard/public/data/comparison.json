@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T12:00:00.000Z",
+  "generatedAt": "2026-10-06T04:00:00.000Z",
   "isSample": true,
   "rows": [
     {
@@ -8,7 +8,9 @@
       "testOn": "Google 2019",
       "rmse": 0.052,
       "mae": 0.039,
-      "r2": 0.884
+      "r2": 0.884,
+      "relativeError": 0.093,
+      "unit": "fraction"
     },
     {
       "metric": "cpu",
@@ -16,7 +18,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 0.089,
       "mae": 0.067,
-      "r2": 0.718
+      "r2": 0.718,
+      "relativeError": 0.159,
+      "unit": "fraction"
     },
     {
       "metric": "cpu",
@@ -24,7 +28,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 0.048,
       "mae": 0.036,
-      "r2": 0.899
+      "r2": 0.899,
+      "relativeError": 0.086,
+      "unit": "fraction"
     },
     {
       "metric": "cpu",
@@ -32,7 +38,9 @@
       "testOn": "Google 2019",
       "rmse": 0.094,
       "mae": 0.071,
-      "r2": 0.692
+      "r2": 0.692,
+      "relativeError": 0.168,
+      "unit": "fraction"
     },
     {
       "metric": "memory",
@@ -40,7 +48,9 @@
       "testOn": "Google 2019",
       "rmse": 0.041,
       "mae": 0.031,
-      "r2": 0.912
+      "r2": 0.912,
+      "relativeError": 0.059,
+      "unit": "fraction"
     },
     {
       "metric": "memory",
@@ -48,7 +58,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 0.076,
       "mae": 0.058,
-      "r2": 0.764
+      "r2": 0.764,
+      "relativeError": 0.109,
+      "unit": "fraction"
     },
     {
       "metric": "memory",
@@ -56,7 +68,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 0.039,
       "mae": 0.029,
-      "r2": 0.925
+      "r2": 0.925,
+      "relativeError": 0.056,
+      "unit": "fraction"
     },
     {
       "metric": "memory",
@@ -64,7 +78,9 @@
       "testOn": "Google 2019",
       "rmse": 0.081,
       "mae": 0.062,
-      "r2": 0.739
+      "r2": 0.739,
+      "relativeError": 0.116,
+      "unit": "fraction"
     },
     {
       "metric": "taskArrival",
@@ -72,7 +88,9 @@
       "testOn": "Google 2019",
       "rmse": 28.4,
       "mae": 19.8,
-      "r2": 0.841
+      "r2": 0.841,
+      "relativeError": 0.065,
+      "unit": "tasks/min"
     },
     {
       "metric": "taskArrival",
@@ -80,7 +98,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 54.2,
       "mae": 38.6,
-      "r2": 0.612
+      "r2": 0.612,
+      "relativeError": 0.123,
+      "unit": "tasks/min"
     },
     {
       "metric": "taskArrival",
@@ -88,7 +108,9 @@
       "testOn": "Alibaba 2018",
       "rmse": 26.1,
       "mae": 18.2,
-      "r2": 0.865
+      "r2": 0.865,
+      "relativeError": 0.059,
+      "unit": "tasks/min"
     },
     {
       "metric": "taskArrival",
@@ -96,7 +118,9 @@
       "testOn": "Google 2019",
       "rmse": 58.7,
       "mae": 41.5,
-      "r2": 0.583
+      "r2": 0.583,
+      "relativeError": 0.133,
+      "unit": "tasks/min"
     }
   ]
 }

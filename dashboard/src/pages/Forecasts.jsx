@@ -124,7 +124,7 @@ export function Forecasts() {
                             ? metric === 'taskArrival'
                               ? formatNumber(row.actual)
                               : formatPercent(row.actual, 2)
-                            : '-'}
+                            : 'Not yet known'}
                         </td>
                         <td>
                           {metric === 'taskArrival'

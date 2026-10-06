@@ -26,7 +26,7 @@ function CustomTooltip({ active, payload, label, metric }) {
           : formatNumber(entry.value);
         return (
           <div key={entry.name} style={{ color: entry.color || colors.ink }}>
-            {entry.name}: {entry.value !== null && entry.value !== undefined ? valStr : '-'}
+            {entry.name}: {entry.value !== null && entry.value !== undefined ? valStr : 'Not yet known'}
           </div>
         );
       })}
