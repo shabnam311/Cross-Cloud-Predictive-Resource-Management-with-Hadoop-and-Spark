@@ -1,8 +1,17 @@
-from fastapi import FastAPI, WebSocket , WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 
 app = FastAPI(title="Resource Recommendation Engine")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
@@ -97,3 +106,26 @@ async def generate_recommendation(data: MLPrediction):
     await manager.broadcast(recommendation)
     
     return recommendation
+
+import random
+import time
+
+NODES = ["Node-01", "Node-02", "Node-03", "Node-14"]
+
+def generate_mock_prediction():
+    """Generates a random ML prediction payload matching mock.py."""
+    cpu_util = random.choices([random.uniform(0.1, 0.7), random.uniform(0.7, 0.99)], weights=[70, 30])[0]
+    mem_util = random.choices([random.uniform(0.1, 0.7), random.uniform(0.7, 0.95)], weights=[70, 30])[0]
+    return MLPrediction(
+        node_id=random.choice(NODES),
+        timestamp=int(time.time()),
+        pred_cpu_util=round(cpu_util, 2),
+        pred_mem_util=round(mem_util, 2),
+        task_arrival_rate=random.randint(100, 1500)
+    )
+
+@app.post("/api/simulate", response_model=ScalingRecommendation)
+async def simulate_recommendation_step():
+    """Triggers one mock prediction matching mock.py and broadcasts recommendation."""
+    prediction = generate_mock_prediction()
+    return await generate_recommendation(prediction)
