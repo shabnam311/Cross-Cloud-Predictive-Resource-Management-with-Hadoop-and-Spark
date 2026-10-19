@@ -1,7 +1,21 @@
 #  Cross-Cloud Predictive Resource Management with Hadoop & Spark
 
+PS E:\bdlab> docker exec -it -e CLOUD=alibaba -e INTERVAL_S=10 -e MAX_WINDOWS=150 spark-master-cloud /opt/spark/bin/spark-shell `
+>>   --master spark://spark-master-cloud:7077 `
+>>   --total-executor-cores 1 --executor-cores 1 `
+>>   --executor-memory 1G --driver-memory 1G `
+>>   -i /opt/spark-apps/05a_replayer.scala
 
-
+PS E:\bdlab> docker exec -it -e CLOUD=alibaba spark-master-cloud /opt/spark/bin/spark-shell `
+>>   --master spark://spark-master-cloud:7077 `
+>>   --total-executor-cores 2 --executor-cores 1 `
+>>   --executor-memory 2G --driver-memory 2G `
+>>   --conf spark.eventLog.enabled=true `
+>>   --conf spark.eventLog.dir=hdfs://namenode-cloud:9000/spark-events `
+>>   --conf spark.eventLog.rolling.enabled=true `
+>>   --conf spark.eventLog.rolling.maxFileSize=16m `
+>>   -i /opt/spark-apps/05_stream.scala
+>> 
 ##  Project Overview
 Modern cloud infrastructures traditionally rely on reactive resource allocation, which can lead to latency spikes and inefficient resource utilization. This project shifts the paradigm from **reactive to proactive resource allocation** by building an end-to-end Big Data pipeline. 
 
