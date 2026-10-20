@@ -36,7 +36,7 @@ By leveraging **Google Cluster Trace 2019** and **Alibaba Cluster Trace 2018**, 
 *   **Machine Learning:** Spark MLlib (Gradient Boosted Trees)
 *   **Programming Languages:** Scala, Python, JavaScript
 *   **Frontend:** React.js
-*   **Infrastructure & Deployment:** Docker (ARM-based architecture), Kubernetes (Planned)
+*   **Infrastructure & Deployment:** Docker (ARM-based architecture)
 
 ## Task Arrival Rate Model (Transfer Learning) — v2
 
@@ -70,7 +70,6 @@ Run order and full code: see `TASK_ARRIVAL_RATE_TRANSFER_LEARNING_V2.md`.
 - [x] Finalize Task Arrival Rate model (hurdle classifier + regressor, Google→Alibaba transfer learning).
 - [ ] Develop the resource recommendation engine logic.
 - [ ] Build and integrate the React frontend dashboard.
-- [ ] (Optional) Kubernetes-based deployment and validation.
 
 ##  Getting Started (Local Development)
 *Prerequisites: Docker Desktop installed on your machine.*
