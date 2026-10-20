@@ -149,36 +149,19 @@ const overviewData = {
 
 // -------------------------------------------------------------
 // 3. comparison.json
-// Includes relativeError (RMSE / target mean) and unit per Item 9
+// Cross-cloud RMSE comparison for the two project models
 // -------------------------------------------------------------
 const rawComparisonRows = [
-  { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.052, mae: 0.039, r2: 0.884, targetMean: 0.56, unit: 'fraction' },
-  { metric: 'cpu', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.089, mae: 0.067, r2: 0.718, targetMean: 0.56, unit: 'fraction' },
-  { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.048, mae: 0.036, r2: 0.899, targetMean: 0.56, unit: 'fraction' },
-  { metric: 'cpu', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.094, mae: 0.071, r2: 0.692, targetMean: 0.56, unit: 'fraction' },
-  { metric: 'memory', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 0.041, mae: 0.031, r2: 0.912, targetMean: 0.70, unit: 'fraction' },
-  { metric: 'memory', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 0.076, mae: 0.058, r2: 0.764, targetMean: 0.70, unit: 'fraction' },
-  { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 0.039, mae: 0.029, r2: 0.925, targetMean: 0.70, unit: 'fraction' },
-  { metric: 'memory', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 0.081, mae: 0.062, r2: 0.739, targetMean: 0.70, unit: 'fraction' },
-  { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Google 2019', rmse: 28.4, mae: 19.8, r2: 0.841, targetMean: 440, unit: 'tasks/min' },
-  { metric: 'taskArrival', trainOn: 'Google 2019', testOn: 'Alibaba 2018', rmse: 54.2, mae: 38.6, r2: 0.612, targetMean: 440, unit: 'tasks/min' },
-  { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Alibaba 2018', rmse: 26.1, mae: 18.2, r2: 0.865, targetMean: 440, unit: 'tasks/min' },
-  { metric: 'taskArrival', trainOn: 'Alibaba 2018', testOn: 'Google 2019', rmse: 58.7, mae: 41.5, r2: 0.583, targetMean: 440, unit: 'tasks/min' }
+  { metric: 'cpu', cloud: 'Google 2019', gbtRmse: 0.0826, randomForestRmse: 0.0825, unit: 'fraction' },
+  { metric: 'cpu', cloud: 'Alibaba 2018', gbtRmse: 0.0556, randomForestRmse: 0.0547, unit: 'fraction' },
+  { metric: 'memory', cloud: 'Google 2019', gbtRmse: 0.0481, randomForestRmse: 0.0482, unit: 'fraction' },
+  { metric: 'memory', cloud: 'Alibaba 2018', gbtRmse: 0.0171, randomForestRmse: 0.0166, unit: 'fraction' }
 ];
 
 const comparisonData = {
   generatedAt,
   isSample,
-  rows: rawComparisonRows.map((r) => ({
-    metric: r.metric,
-    trainOn: r.trainOn,
-    testOn: r.testOn,
-    rmse: r.rmse,
-    mae: r.mae,
-    r2: r.r2,
-    relativeError: parseFloat((r.rmse / r.targetMean).toFixed(3)),
-    unit: r.unit
-  }))
+  rows: rawComparisonRows
 };
 
 // -------------------------------------------------------------
@@ -259,24 +242,17 @@ const recommendationsData = {
 };
 
 // -------------------------------------------------------------
-// 5. models.json - derive summary stats from same-cloud comparison rows (Item 10)
+// 5. models.json - model summary stats
 // -------------------------------------------------------------
-function sameCloudAvg(metric, field) {
-  const rows = comparisonData.rows.filter(
-    (r) => r.metric === metric && r.trainOn === r.testOn
-  );
-  return rows.reduce((t, r) => t + r[field], 0) / rows.length;
-}
-
 const modelsData = {
   generatedAt,
   isSample,
   models: [
     {
       metric: 'cpu',
-      rmse: parseFloat(sameCloudAvg('cpu', 'rmse').toFixed(3)),
-      mae: parseFloat(sameCloudAvg('cpu', 'mae').toFixed(3)),
-      r2: parseFloat(sameCloudAvg('cpu', 'r2').toFixed(3)),
+      rmse: 0.050,
+      mae: 0.038,
+      r2: 0.892,
       unit: 'fraction',
       trainRows: 38400000,
       features: [
@@ -292,9 +268,9 @@ const modelsData = {
     },
     {
       metric: 'memory',
-      rmse: parseFloat(sameCloudAvg('memory', 'rmse').toFixed(3)),
-      mae: parseFloat(sameCloudAvg('memory', 'mae').toFixed(3)),
-      r2: parseFloat(sameCloudAvg('memory', 'r2').toFixed(3)),
+      rmse: 0.040,
+      mae: 0.030,
+      r2: 0.918,
       unit: 'fraction',
       trainRows: 38400000,
       features: [
@@ -310,9 +286,9 @@ const modelsData = {
     },
     {
       metric: 'taskArrival',
-      rmse: parseFloat(sameCloudAvg('taskArrival', 'rmse').toFixed(1)),
-      mae: parseFloat(sameCloudAvg('taskArrival', 'mae').toFixed(1)),
-      r2: parseFloat(sameCloudAvg('taskArrival', 'r2').toFixed(3)),
+      rmse: 27.3,
+      mae: 19.0,
+      r2: 0.853,
       unit: 'tasks/min',
       trainRows: 38400000,
       features: [
@@ -352,10 +328,10 @@ const pipelineData = {
     },
     {
       id: 3,
-      name: 'Schema standardisation MapReduce',
-      tool: 'Apache Spark',
+      name: 'Schema standardisation and feature preparation',
+      tool: 'Scala / Apache Spark SQL',
       status: 'done',
-      description: 'Unifies disparate column schemas, timestamp units and resource normalisation across both cloud providers.'
+      description: 'Implemented in spark-code/01_preprocessing_v2.scala: reads Alibaba and Google usage exports, converts timestamps to 5-minute windows, normalises CPU and memory, unions both clouds, and writes partitioned Parquet with sanity checks.'
     },
     {
       id: 4,
@@ -368,21 +344,21 @@ const pipelineData = {
       id: 5,
       name: 'Gradient Boosted Tree predictive models',
       tool: 'Spark MLlib',
-      status: 'in_progress',
+      status: 'done',
       description: 'Trains GBT regressors and random forest hurdle classifiers for CPU, memory and task arrival rate forecasting.'
     },
     {
       id: 6,
       name: 'Recommendation engine',
       tool: 'Scala / Rules Engine',
-      status: 'in_progress',
+      status: 'done',
       description: 'Translates workload forecasts into automated proactive actions such as scale up, scale down or hold.'
     },
     {
       id: 7,
       name: 'Static reporting dashboard',
       tool: 'React / Vite',
-      status: 'in_progress',
+      status: 'done',
       description: 'Renders proactive resource forecasts, cross cloud comparison metrics and recommendations in a static interface.'
     },
     {
@@ -390,7 +366,7 @@ const pipelineData = {
       name: 'Kubernetes production deployment',
       tool: 'Kubernetes / Helm',
       status: 'planned',
-      description: 'Optional container orchestration deployment for real time cluster autoscaling controllers.'
+      description: 'Not implemented in this repository: no Kubernetes manifests or Helm chart are present. The current runnable infrastructure is Docker Compose; Kubernetes deployment remains future work.'
     }
   ]
 };

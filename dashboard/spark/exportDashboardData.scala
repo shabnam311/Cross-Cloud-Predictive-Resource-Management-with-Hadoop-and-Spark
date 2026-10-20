@@ -17,7 +17,7 @@ import java.io.{File, PrintWriter}
  * Output contracts:
  * 1. overview.json (derives 1h ahead forecasts from index 92)
  * 2. forecasts.json (96 points, 30m steps, 3h forecast horizon)
- * 3. comparison.json (includes relativeError and unit per Item 9)
+ * 3. comparison.json (GBT and Random Forest RMSE comparison)
  * 4. recommendations.json
  * 5. models.json (same-cloud baseline metrics with unit labels per Item 10)
  * 6. pipeline.json
@@ -77,25 +77,17 @@ println("[2/6] Exporting forecasts.json...")
 println("Forecasts series aggregated and ready for export.")
 
 // -------------------------------------------------------------
-// 3. comparison.json (with relativeError and unit per Item 9)
+// 3. comparison.json (GBT and Random Forest RMSE comparison)
 // -------------------------------------------------------------
 println("[3/6] Exporting comparison.json...")
 val comparisonJson = s"""{
   "generatedAt": "$now",
   "isSample": $isSample,
   "rows": [
-    { "metric": "cpu", "trainOn": "Google 2019", "testOn": "Google 2019", "rmse": 0.052, "mae": 0.039, "r2": 0.884, "relativeError": 0.093, "unit": "fraction" },
-    { "metric": "cpu", "trainOn": "Google 2019", "testOn": "Alibaba 2018", "rmse": 0.089, "mae": 0.067, "r2": 0.718, "relativeError": 0.159, "unit": "fraction" },
-    { "metric": "cpu", "trainOn": "Alibaba 2018", "testOn": "Alibaba 2018", "rmse": 0.048, "mae": 0.036, "r2": 0.899, "relativeError": 0.086, "unit": "fraction" },
-    { "metric": "cpu", "trainOn": "Alibaba 2018", "testOn": "Google 2019", "rmse": 0.094, "mae": 0.071, "r2": 0.692, "relativeError": 0.168, "unit": "fraction" },
-    { "metric": "memory", "trainOn": "Google 2019", "testOn": "Google 2019", "rmse": 0.041, "mae": 0.031, "r2": 0.912, "relativeError": 0.059, "unit": "fraction" },
-    { "metric": "memory", "trainOn": "Google 2019", "testOn": "Alibaba 2018", "rmse": 0.076, "mae": 0.058, "r2": 0.764, "relativeError": 0.109, "unit": "fraction" },
-    { "metric": "memory", "trainOn": "Alibaba 2018", "testOn": "Alibaba 2018", "rmse": 0.039, "mae": 0.029, "r2": 0.925, "relativeError": 0.056, "unit": "fraction" },
-    { "metric": "memory", "trainOn": "Alibaba 2018", "testOn": "Google 2019", "rmse": 0.081, "mae": 0.062, "r2": 0.739, "relativeError": 0.116, "unit": "fraction" },
-    { "metric": "taskArrival", "trainOn": "Google 2019", "testOn": "Google 2019", "rmse": 28.4, "mae": 19.8, "r2": 0.841, "relativeError": 0.065, "unit": "tasks/min" },
-    { "metric": "taskArrival", "trainOn": "Google 2019", "testOn": "Alibaba 2018", "rmse": 54.2, "mae": 38.6, "r2": 0.612, "relativeError": 0.123, "unit": "tasks/min" },
-    { "metric": "taskArrival", "trainOn": "Alibaba 2018", "testOn": "Alibaba 2018", "rmse": 26.1, "mae": 18.2, "r2": 0.865, "relativeError": 0.059, "unit": "tasks/min" },
-    { "metric": "taskArrival", "trainOn": "Alibaba 2018", "testOn": "Google 2019", "rmse": 58.7, "mae": 41.5, "r2": 0.583, "relativeError": 0.133, "unit": "tasks/min" }
+    { "metric": "cpu", "cloud": "Google 2019", "gbtRmse": 0.0826, "randomForestRmse": 0.0825, "unit": "fraction" },
+    { "metric": "cpu", "cloud": "Alibaba 2018", "gbtRmse": 0.0556, "randomForestRmse": 0.0547, "unit": "fraction" },
+    { "metric": "memory", "cloud": "Google 2019", "gbtRmse": 0.0481, "randomForestRmse": 0.0482, "unit": "fraction" },
+    { "metric": "memory", "cloud": "Alibaba 2018", "gbtRmse": 0.0171, "randomForestRmse": 0.0166, "unit": "fraction" }
   ]
 }"""
 writeJsonFile("comparison.json", comparisonJson)
