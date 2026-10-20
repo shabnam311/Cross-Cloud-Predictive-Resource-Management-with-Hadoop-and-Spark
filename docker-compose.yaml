@@ -110,6 +110,8 @@ services:
       - "7077:7077"
       - "8080:8080"
       - "4040:4040"
+    volumes:
+      - ./spark-code:/opt/spark-apps
     command:
       - /opt/spark/bin/spark-class
       - org.apache.spark.deploy.master.Master
