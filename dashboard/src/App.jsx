@@ -2,10 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { TopBar } from './components/TopBar';
 import { Footer } from './components/Footer';
-import { useData } from './hooks/useData';
 
 const Overview = lazy(() => import('./pages/Overview').then((m) => ({ default: m.Overview })));
-const Forecasts = lazy(() => import('./pages/Forecasts').then((m) => ({ default: m.Forecasts })));
 const CrossCloud = lazy(() => import('./pages/CrossCloud').then((m) => ({ default: m.CrossCloud })));
 const Recommendations = lazy(() => import('./pages/Recommendations').then((m) => ({ default: m.Recommendations })));
 const Models = lazy(() => import('./pages/Models').then((m) => ({ default: m.Models })));
@@ -24,8 +22,6 @@ function NotFound() {
 }
 
 export function App() {
-  const { data: overview } = useData('overview.json');
-
   return (
     <div className="app-container">
       <TopBar />
@@ -33,7 +29,6 @@ export function App() {
         <Suspense fallback={<div className="state-container"><div className="state-title">Loading...</div></div>}>
           <Routes>
             <Route path="/" element={<Overview />} />
-            <Route path="/forecasts" element={<Forecasts />} />
             <Route path="/cross-cloud" element={<CrossCloud />} />
             <Route path="/recommendations" element={<Recommendations />} />
             <Route path="/models" element={<Models />} />
@@ -44,7 +39,7 @@ export function App() {
           </Routes>
         </Suspense>
       </main>
-      <Footer generatedAt={overview?.generatedAt} isSample={overview?.isSample ?? true} />
+      <Footer />
     </div>
   );
 }

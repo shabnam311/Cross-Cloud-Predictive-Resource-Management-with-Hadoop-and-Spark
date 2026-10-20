@@ -20,8 +20,8 @@ export function CrossCloud() {
   const { data, loading, error } = useData('comparison.json');
 
   // Compute grouped bar chart data using relative error (RMSE / target mean) per Item 9
-  const metricKeys = ['cpu', 'memory', 'taskArrival'];
-  const metricLabels = { cpu: 'CPU usage', memory: 'Memory', taskArrival: 'Task arrival' };
+  const metricKeys = ['cpu', 'memory'];
+  const metricLabels = { cpu: 'CPU usage', memory: 'Memory' };
 
   const avgRelativeError = (rows, metric, same) => {
     const filtered = rows.filter(
@@ -42,10 +42,12 @@ export function CrossCloud() {
       }))
     : [];
 
+  const visibleRows = data?.rows?.filter((row) => row.metric !== 'taskArrival') || [];
+
   // Group rows by metric to find the lowest RMSE for each metric
   const bestRmseByMetric = {};
-  if (data?.rows) {
-    data.rows.forEach((row) => {
+  if (visibleRows.length) {
+    visibleRows.forEach((row) => {
       if (!bestRmseByMetric[row.metric] || row.rmse < bestRmseByMetric[row.metric]) {
         bestRmseByMetric[row.metric] = row.rmse;
       }
@@ -131,13 +133,13 @@ export function CrossCloud() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.rows?.map((row, idx) => {
+                  {visibleRows.map((row, idx) => {
                     const isBest = row.rmse === bestRmseByMetric[row.metric];
                     const isTrainAlibaba = row.trainOn.includes('Alibaba');
                     const isTestAlibaba = row.testOn.includes('Alibaba');
                     return (
                       <tr key={idx} className={isBest ? 'highlight-best' : ''}>
-                        <td>{row.metric === 'taskArrival' ? 'Task arrival' : row.metric.toUpperCase()}</td>
+                        <td>{row.metric.toUpperCase()}</td>
                         <td>
                           <span style={{ color: isTrainAlibaba ? colors.alibaba : colors.google, fontWeight: 500 }}>
                             {row.trainOn}
@@ -148,16 +150,16 @@ export function CrossCloud() {
                             {row.testOn}
                           </span>
                         </td>
-                        <td>{formatDecimal(row.rmse, row.metric === 'taskArrival' ? 1 : 3)}</td>
-                        <td>{formatDecimal(row.mae, row.metric === 'taskArrival' ? 1 : 3)}</td>
+                        <td>{formatDecimal(row.rmse, 3)}</td>
+                        <td>{formatDecimal(row.mae, 3)}</td>
                         <td style={{ color: colors.muted, fontSize: 'var(--font-size-sm)' }}>
-                          {row.unit || (row.metric === 'taskArrival' ? 'tasks/min' : 'fraction')}
+                          {row.unit || 'fraction'}
                         </td>
                         <td>
                           {row.relativeError !== undefined
                             ? formatPercent(row.relativeError, 1)
                             : formatPercent(
-                                row.rmse / (row.metric === 'taskArrival' ? 440 : row.metric === 'memory' ? 0.70 : 0.56),
+                                row.rmse / (row.metric === 'memory' ? 0.70 : 0.56),
                                 1
                               )}
                         </td>
