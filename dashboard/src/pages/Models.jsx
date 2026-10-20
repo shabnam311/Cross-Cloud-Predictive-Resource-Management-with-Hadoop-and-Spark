@@ -21,7 +21,6 @@ export function Models() {
   const modelLabels = {
     cpu: 'CPU utilization model (GBT Regressor)',
     memory: 'Memory consumption model (GBT Regressor)',
-    taskArrival: 'Task arrival rate model (Hurdle Classifier + GBT)',
   };
 
   return (
@@ -34,7 +33,7 @@ export function Models() {
             isSample={data.isSample}
           />
 
-          {data.models?.map((model) => (
+          {data.models?.filter((model) => model.metric !== 'taskArrival').map((model) => (
             <div key={model.metric} className="page-section" style={{ gap: '16px' }}>
               <h2 style={{ fontSize: 'var(--font-size-title-sm)' }}>
                 {modelLabels[model.metric] || model.metric}
@@ -44,22 +43,18 @@ export function Models() {
               <div className="stat-row" style={{ padding: '16px 0' }}>
                 <div className="stat-item">
                   <span className="stat-label">
-                    {model.metric === 'taskArrival' ? 'RMSE (tasks/min)' : 'RMSE (normalised)'}
+                    RMSE (normalised)
                   </span>
                   <span className="stat-value">
-                    {model.metric === 'taskArrival'
-                      ? `${formatDecimal(model.rmse, 1)} / min`
-                      : formatDecimal(model.rmse, 3)}
+                    {formatDecimal(model.rmse, 3)}
                   </span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-label">
-                    {model.metric === 'taskArrival' ? 'MAE (tasks/min)' : 'MAE (normalised)'}
+                    MAE (normalised)
                   </span>
                   <span className="stat-value">
-                    {model.metric === 'taskArrival'
-                      ? `${formatDecimal(model.mae, 1)} / min`
-                      : formatDecimal(model.mae, 3)}
+                    {formatDecimal(model.mae, 3)}
                   </span>
                 </div>
                 <div className="stat-item">
