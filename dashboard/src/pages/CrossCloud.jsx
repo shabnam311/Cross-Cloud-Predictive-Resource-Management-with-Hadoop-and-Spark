@@ -20,6 +20,7 @@ export function CrossCloud() {
   const { data, loading, error } = useData('comparison.json');
 
   const visibleRows = data?.rows || [];
+  const transferRows = data?.transferRows || [];
   const chartData = visibleRows.map((row) => ({
     name: `${row.metric === 'cpu' ? 'CPU' : 'Memory'} · ${row.cloud}`,
     gbtRmse: row.gbtRmse,
@@ -101,6 +102,38 @@ export function CrossCloud() {
                       </td>
                       <td>{formatDecimal(row.gbtRmse, 4)}</td>
                       <td>{formatDecimal(row.randomForestRmse, 4)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="page-section">
+            <h2 style={{ fontSize: 'var(--font-size-title-sm)' }}>Cross-cloud transfer change</h2>
+            <p>
+              Percentage change in RMSE when a model is transferred to the other cloud. Positive values mean
+              higher error; negative values mean lower error.
+            </p>
+            <div className="table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Direction</th>
+                    <th>CPU: GBT</th>
+                    <th>CPU: Random Forest</th>
+                    <th>Memory: GBT</th>
+                    <th>Memory: Random Forest</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transferRows.map((row) => (
+                    <tr key={row.direction}>
+                      <td>{row.direction}</td>
+                      <td>{row.cpuGbtChange > 0 ? '+' : ''}{row.cpuGbtChange}%</td>
+                      <td>{row.cpuRandomForestChange > 0 ? '+' : ''}{row.cpuRandomForestChange}%</td>
+                      <td>{row.memoryGbtChange > 0 ? '+' : ''}{row.memoryGbtChange}%</td>
+                      <td>{row.memoryRandomForestChange > 0 ? '+' : ''}{row.memoryRandomForestChange}%</td>
                     </tr>
                   ))}
                 </tbody>

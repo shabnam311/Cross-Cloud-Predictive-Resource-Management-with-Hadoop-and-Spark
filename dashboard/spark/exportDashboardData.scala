@@ -88,6 +88,10 @@ val comparisonJson = s"""{
     { "metric": "cpu", "cloud": "Alibaba 2018", "gbtRmse": 0.0556, "randomForestRmse": 0.0547, "unit": "fraction" },
     { "metric": "memory", "cloud": "Google 2019", "gbtRmse": 0.0481, "randomForestRmse": 0.0482, "unit": "fraction" },
     { "metric": "memory", "cloud": "Alibaba 2018", "gbtRmse": 0.0171, "randomForestRmse": 0.0166, "unit": "fraction" }
+  ],
+  "transferRows": [
+    { "direction": "Google → Alibaba", "cpuGbtChange": 4, "cpuRandomForestChange": 5, "memoryGbtChange": -3, "memoryRandomForestChange": 4 },
+    { "direction": "Alibaba → Google", "cpuGbtChange": 10, "cpuRandomForestChange": 11, "memoryGbtChange": 6, "memoryRandomForestChange": 10 }
   ]
 }"""
 writeJsonFile("comparison.json", comparisonJson)
