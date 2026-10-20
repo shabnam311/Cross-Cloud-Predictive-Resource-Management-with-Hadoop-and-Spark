@@ -5,7 +5,6 @@ const navItems = [
   { path: '/', label: 'Overview' },
   { path: '/cross-cloud', label: 'Cross-cloud' },
   { path: '/recommendations', label: 'Recommendations' },
-  { path: '/models', label: 'Models' },
   { path: '/pipeline', label: 'Pipeline' },
   { path: '/about', label: 'About' },
 ];
