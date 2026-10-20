@@ -14,45 +14,17 @@ import { DataState } from '../components/DataState';
 import { PageHeader } from '../components/PageHeader';
 import { Figure } from '../components/Figure';
 import { colors } from '../lib/colors';
-import { formatDecimal, formatPercent } from '../lib/format';
+import { formatDecimal } from '../lib/format';
 
 export function CrossCloud() {
   const { data, loading, error } = useData('comparison.json');
 
-  // Compute grouped bar chart data using relative error (RMSE / target mean) per Item 9
-  const metricKeys = ['cpu', 'memory'];
-  const metricLabels = { cpu: 'CPU usage', memory: 'Memory' };
-
-  const avgRelativeError = (rows, metric, same) => {
-    const filtered = rows.filter(
-      (r) => r.metric === metric && (r.trainOn === r.testOn) === same
-    );
-    if (filtered.length === 0) return 0;
-    return (
-      filtered.reduce((t, r) => t + (r.relativeError !== undefined ? r.relativeError : r.rmse), 0) /
-      filtered.length
-    );
-  };
-
-  const chartData = data?.rows
-    ? metricKeys.map((m) => ({
-        name: metricLabels[m],
-        sameCloud: avgRelativeError(data.rows, m, true),
-        crossCloud: avgRelativeError(data.rows, m, false),
-      }))
-    : [];
-
-  const visibleRows = data?.rows?.filter((row) => row.metric !== 'taskArrival') || [];
-
-  // Group rows by metric to find the lowest RMSE for each metric
-  const bestRmseByMetric = {};
-  if (visibleRows.length) {
-    visibleRows.forEach((row) => {
-      if (!bestRmseByMetric[row.metric] || row.rmse < bestRmseByMetric[row.metric]) {
-        bestRmseByMetric[row.metric] = row.rmse;
-      }
-    });
-  }
+  const visibleRows = data?.rows || [];
+  const chartData = visibleRows.map((row) => ({
+    name: `${row.metric === 'cpu' ? 'CPU' : 'Memory'} · ${row.cloud}`,
+    gbtRmse: row.gbtRmse,
+    randomForestRmse: row.randomForestRmse,
+  }));
 
   return (
     <DataState loading={loading} error={error}>
@@ -60,19 +32,18 @@ export function CrossCloud() {
         <div className="page-section">
           <PageHeader
             title="Cross-Cloud Generalisation"
-            description="Evaluates whether predictive models trained on Google Cluster traces generalise effectively to Alibaba workloads and vice versa."
+            description="Compares RMSE for Gradient Boosted Tree and Random Forest models across the Google and Alibaba workloads."
             isSample={data.isSample}
           />
 
           <p>
-            This comparison tests domain transferability by training Gradient Boosted Tree models on one
-            cloud provider and evaluating forecast error directly against the other provider without retraining.
+            This comparison reports the root mean square error (RMSE) of the two models used by the project.
           </p>
 
-          {/* Grouped Bar Chart of Relative Error */}
+          {/* Grouped Bar Chart of RMSE */}
           <Figure
-            caption="Average relative error (RMSE divided by target mean) for same-cloud baseline evaluation versus zero-shot cross-cloud transfer."
-            ariaLabel="Grouped bar chart comparing same cloud vs cross cloud relative error."
+            caption="RMSE comparison for GBT and Random Forest across CPU and memory workloads. Lower values indicate lower prediction error."
+            ariaLabel="Grouped bar chart comparing GBT and Random Forest RMSE."
           >
             <div className="chart-wrapper">
               <ResponsiveContainer width="100%" height="100%">
@@ -85,14 +56,7 @@ export function CrossCloud() {
                     tickLine={false}
                     axisLine={{ stroke: colors.line }}
                   />
-                  <YAxis
-                    stroke={colors.muted}
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={{ stroke: colors.line }}
-                    tickFormatter={(v) => formatPercent(v, 0)}
-                    domain={[0, 0.25]}
-                  />
+                  <YAxis stroke={colors.muted} fontSize={12} tickLine={false} axisLine={{ stroke: colors.line }} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: colors.surface,
@@ -100,7 +64,7 @@ export function CrossCloud() {
                       borderRadius: 6,
                       fontSize: 13,
                     }}
-                    formatter={(val) => [formatPercent(val, 1), 'Relative error']}
+                    formatter={(val) => [formatDecimal(val, 4), 'RMSE']}
                   />
                   <Legend
                     verticalAlign="top"
@@ -108,65 +72,37 @@ export function CrossCloud() {
                     iconType="rect"
                     wrapperStyle={{ fontSize: 13, paddingBottom: 12 }}
                   />
-                  <Bar dataKey="sameCloud" name="Same cloud (baseline)" fill={colors.pine} />
-                  <Bar dataKey="crossCloud" name="Cross cloud (transfer)" fill={colors.muted} />
+                  <Bar dataKey="gbtRmse" name="GBT RMSE" fill={colors.pine} />
+                  <Bar dataKey="randomForestRmse" name="Random Forest RMSE" fill={colors.muted} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </Figure>
 
-          {/* Detailed Evaluation Metrics Table with Unit and Relative Error */}
+          {/* RMSE comparison table */}
           <div className="page-section">
-            <h2 style={{ fontSize: 'var(--font-size-title-sm)' }}>Detailed evaluation metrics</h2>
+            <h2 style={{ fontSize: 'var(--font-size-title-sm)' }}>RMSE by model</h2>
             <div className="table-container">
               <table className="data-table">
                 <thead>
                   <tr>
                     <th>Metric</th>
-                    <th>Train on</th>
-                    <th>Test on</th>
-                    <th>RMSE</th>
-                    <th>MAE</th>
-                    <th>Unit</th>
-                    <th>Relative error</th>
-                    <th>R² score</th>
+                    <th>Cloud</th>
+                    <th>GBT RMSE</th>
+                    <th>Random Forest RMSE</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleRows.map((row, idx) => {
-                    const isBest = row.rmse === bestRmseByMetric[row.metric];
-                    const isTrainAlibaba = row.trainOn.includes('Alibaba');
-                    const isTestAlibaba = row.testOn.includes('Alibaba');
-                    return (
-                      <tr key={idx} className={isBest ? 'highlight-best' : ''}>
-                        <td>{row.metric.toUpperCase()}</td>
-                        <td>
-                          <span style={{ color: isTrainAlibaba ? colors.alibaba : colors.google, fontWeight: 500 }}>
-                            {row.trainOn}
-                          </span>
-                        </td>
-                        <td>
-                          <span style={{ color: isTestAlibaba ? colors.alibaba : colors.google, fontWeight: 500 }}>
-                            {row.testOn}
-                          </span>
-                        </td>
-                        <td>{formatDecimal(row.rmse, 3)}</td>
-                        <td>{formatDecimal(row.mae, 3)}</td>
-                        <td style={{ color: colors.muted, fontSize: 'var(--font-size-sm)' }}>
-                          {row.unit || 'fraction'}
-                        </td>
-                        <td>
-                          {row.relativeError !== undefined
-                            ? formatPercent(row.relativeError, 1)
-                            : formatPercent(
-                                row.rmse / (row.metric === 'memory' ? 0.70 : 0.56),
-                                1
-                              )}
-                        </td>
-                        <td>{formatDecimal(row.r2, 3)}</td>
-                      </tr>
-                    );
-                  })}
+                  {visibleRows.map((row) => (
+                    <tr key={`${row.metric}-${row.cloud}`}>
+                      <td>{row.metric === 'cpu' ? 'CPU' : 'Memory'}</td>
+                      <td style={{ color: row.cloud.includes('Alibaba') ? colors.alibaba : colors.google, fontWeight: 500 }}>
+                        {row.cloud}
+                      </td>
+                      <td>{formatDecimal(row.gbtRmse, 4)}</td>
+                      <td>{formatDecimal(row.randomForestRmse, 4)}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

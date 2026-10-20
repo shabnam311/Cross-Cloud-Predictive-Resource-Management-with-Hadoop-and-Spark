@@ -18,10 +18,10 @@
     },
     {
       "id": 3,
-      "name": "Schema standardisation MapReduce",
-      "tool": "Apache Spark",
+      "name": "Schema standardisation and feature preparation",
+      "tool": "Scala / Apache Spark SQL",
       "status": "done",
-      "description": "Unifies disparate column schemas, timestamp units and resource normalisation across both cloud providers."
+      "description": "Implemented in spark-code/01_preprocessing_v2.scala: reads Alibaba and Google usage exports, converts timestamps to 5-minute windows, normalises CPU and memory, unions both clouds, and writes partitioned Parquet with sanity checks."
     },
     {
       "id": 4,
@@ -34,21 +34,21 @@
       "id": 5,
       "name": "Gradient Boosted Tree predictive models",
       "tool": "Spark MLlib",
-      "status": "in_progress",
+      "status": "done",
       "description": "Trains GBT regressors and random forest hurdle classifiers for CPU, memory and task arrival rate forecasting."
     },
     {
       "id": 6,
       "name": "Recommendation engine",
       "tool": "Scala / Rules Engine",
-      "status": "in_progress",
+      "status": "done",
       "description": "Translates workload forecasts into automated proactive actions such as scale up, scale down or hold."
     },
     {
       "id": 7,
       "name": "Static reporting dashboard",
       "tool": "React / Vite",
-      "status": "in_progress",
+      "status": "done",
       "description": "Renders proactive resource forecasts, cross cloud comparison metrics and recommendations in a static interface."
     },
     {
@@ -56,7 +56,7 @@
       "name": "Kubernetes production deployment",
       "tool": "Kubernetes / Helm",
       "status": "planned",
-      "description": "Optional container orchestration deployment for real time cluster autoscaling controllers."
+      "description": "Not implemented in this repository: no Kubernetes manifests or Helm chart are present. The current runnable infrastructure is Docker Compose; Kubernetes deployment remains future work."
     }
   ]
 }
