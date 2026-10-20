@@ -346,13 +346,6 @@ const pipelineData = {
       tool: 'React / Vite',
       status: 'done',
       description: 'Renders proactive resource forecasts, cross cloud comparison metrics and recommendations in a static interface.'
-    },
-    {
-      id: 8,
-      name: 'Kubernetes production deployment',
-      tool: 'Kubernetes / Helm',
-      status: 'planned',
-      description: 'Not implemented in this repository: no Kubernetes manifests or Helm chart are present. The current runnable infrastructure is Docker Compose; Kubernetes deployment remains future work.'
     }
   ]
 };
