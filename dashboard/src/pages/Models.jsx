@@ -29,11 +29,11 @@ export function Models() {
         <div className="page-section">
           <PageHeader
             title="Model Architecture & Feature Importance"
-            description="Spark MLlib Gradient Boosted Tree regressors and top predictive feature contributions."
+            description="Spark MLlib GBT and Random Forest models using the shared CPU and memory telemetry feature set."
             isSample={data.isSample}
           />
 
-          {data.models?.filter((model) => model.metric !== 'taskArrival').map((model) => (
+          {data.models?.map((model) => (
             <div key={model.metric} className="page-section" style={{ gap: '16px' }}>
               <h2 style={{ fontSize: 'var(--font-size-title-sm)' }}>
                 {modelLabels[model.metric] || model.metric}

@@ -11,35 +11,35 @@
       "trainRows": 38400000,
       "features": [
         {
-          "name": "cpu_lag_1",
+          "name": "cpu_lag1",
           "importance": 0.342
         },
         {
-          "name": "cpu_avg_5m",
+          "name": "cpu_mean6",
           "importance": 0.228
         },
         {
-          "name": "cpu_lag_2",
+          "name": "cpu_lag2",
           "importance": 0.145
         },
         {
-          "name": "mem_usage_norm",
+          "name": "mem",
           "importance": 0.089
         },
         {
-          "name": "hour_sin",
+          "name": "tod_sin",
           "importance": 0.065
         },
         {
-          "name": "task_arrival_count",
+          "name": "n_rec",
           "importance": 0.052
         },
         {
-          "name": "cpu_avg_15m",
+          "name": "cpu_mean12",
           "importance": 0.044
         },
         {
-          "name": "error_count",
+          "name": "err_cnt6",
           "importance": 0.035
         }
       ]
@@ -53,78 +53,36 @@
       "trainRows": 38400000,
       "features": [
         {
-          "name": "mem_lag_1",
+          "name": "mem_lag1",
           "importance": 0.381
         },
         {
-          "name": "mem_avg_5m",
+          "name": "mem_mean6",
           "importance": 0.246
         },
         {
-          "name": "mem_lag_2",
+          "name": "mem_lag2",
           "importance": 0.132
         },
         {
-          "name": "cpu_usage_norm",
+          "name": "cpu",
           "importance": 0.078
         },
         {
-          "name": "instance_arrival_count",
+          "name": "n_rec_mean12",
           "importance": 0.058
         },
         {
-          "name": "hour_cos",
+          "name": "tod_cos",
           "importance": 0.041
         },
         {
-          "name": "mem_avg_15m",
+          "name": "mem_mean12",
           "importance": 0.039
         },
         {
-          "name": "error_count",
+          "name": "err_cnt6",
           "importance": 0.025
-        }
-      ]
-    },
-    {
-      "metric": "taskArrival",
-      "rmse": 27.3,
-      "mae": 19,
-      "r2": 0.853,
-      "unit": "tasks/min",
-      "trainRows": 38400000,
-      "features": [
-        {
-          "name": "arrival_lag_1",
-          "importance": 0.315
-        },
-        {
-          "name": "arrival_rolling_mean_5",
-          "importance": 0.218
-        },
-        {
-          "name": "task_lag_1",
-          "importance": 0.154
-        },
-        {
-          "name": "hour_sin",
-          "importance": 0.102
-        },
-        {
-          "name": "hour_cos",
-          "importance": 0.076
-        },
-        {
-          "name": "arrival_rolling_std_5",
-          "importance": 0.055
-        },
-        {
-          "name": "cpu_avg_5m",
-          "importance": 0.045
-        },
-        {
-          "name": "instance_avg_5m",
-          "importance": 0.035
         }
       ]
     }
