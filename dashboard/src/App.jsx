@@ -6,7 +6,6 @@ import { Footer } from './components/Footer';
 const Overview = lazy(() => import('./pages/Overview').then((m) => ({ default: m.Overview })));
 const CrossCloud = lazy(() => import('./pages/CrossCloud').then((m) => ({ default: m.CrossCloud })));
 const Recommendations = lazy(() => import('./pages/Recommendations').then((m) => ({ default: m.Recommendations })));
-const Models = lazy(() => import('./pages/Models').then((m) => ({ default: m.Models })));
 const Pipeline = lazy(() => import('./pages/Pipeline').then((m) => ({ default: m.Pipeline })));
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })));
 
@@ -31,7 +30,6 @@ export function App() {
             <Route path="/" element={<Overview />} />
             <Route path="/cross-cloud" element={<CrossCloud />} />
             <Route path="/recommendations" element={<Recommendations />} />
-            <Route path="/models" element={<Models />} />
             <Route path="/pipeline" element={<Pipeline />} />
             <Route path="/about" element={<About />} />
             <Route path="/overview" element={<Navigate to="/" replace />} />
