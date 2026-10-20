@@ -63,7 +63,7 @@ export function Recommendations() {
                 color: connected ? '#16a34a' : '#dc2626',
               }}
             >
-              {connected ? '● LIVE STREAM CONNECTED' : '○ SERVER CONNECTION OFFLINE (No data > 15s)'}
+              {connected ? '● HISTORY STREAM CONNECTED' : '○ SERVER CONNECTION OFFLINE (No data > 15s)'}
             </span>
           </div>
         </div>
